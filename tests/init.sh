@@ -317,10 +317,10 @@ path_prepend_ ()
       *) abs_path_dir_=`cd "$initial_cwd_/$path_dir_" && echo "$PWD"` \
            || fail_ "invalid path dir: $path_dir_";;
     esac
-    case $abs_path_dir_ in
-      *:*) fail_ "invalid path dir: '$abs_path_dir_'";;
-    esac
-    PATH="$abs_path_dir_:$PATH"
+    #case $abs_path_dir_ in
+    #  *:*) fail_ "invalid path dir: '$abs_path_dir_'";;
+    #esac
+    PATH="$abs_path_dir_;$PATH"
 
     # Create an alias, FOO, for each FOO.exe in this directory.
     create_exe_shims_ "$abs_path_dir_" \
