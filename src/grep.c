@@ -1658,6 +1658,14 @@ grepfile (int dirdesc, char const *name, bool follow, bool command_line)
                | (follow ? 0 : O_NOFOLLOW)
                | (skip_devices (command_line) ? O_NONBLOCK : 0));
   int desc = openat_safer (dirdesc, name, oflag);
+#ifdef __OS2__
+  if (desc < 0)
+    {
+      char path[MAXPATHLEN];
+      _abspath(path, name, sizeof(path)-1);
+      int desc = openat_safer (dirdesc, path, oflag);
+    }
+#endif
   if (desc < 0)
     {
       if (follow || ! open_symlink_nofollow_error (errno))
