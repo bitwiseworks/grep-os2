@@ -1,7 +1,7 @@
 dnl
-dnl autoconf input file for ``GNU grep''
+dnl autoconf input file for GNU grep
 dnl
-dnl Copyright (C) 1997-2006, 2009-2011 Free Software Foundation, Inc.
+dnl Copyright (C) 1997-2006, 2009-2016 Free Software Foundation, Inc.
 dnl
 dnl This file is part of GNU grep.
 dnl
@@ -43,7 +43,7 @@ fn_grep () {
   esac
 
   case $pattern in
-    [*[].^$\\*[]*]) dnl The outer brackets are for M4.
+    [*['].^$\*[']*]) dnl The outer brackets are for M4.
       AC_MSG_ERROR([fn_grep: regular expressions not supported])  ;;
   esac
 
@@ -66,9 +66,11 @@ AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_SRCDIR(src/grep.c)
 AC_DEFINE([GREP], 1, [We are building grep])
 AC_PREREQ(2.59)
+AC_CONFIG_MACRO_DIRS([m4])
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz color-tests parallel-tests])
+AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz color-tests parallel-tests
+                  subdir-objects])
 AM_SILENT_RULES([yes]) # make --enable-silent-rules the default.
 
 AC_CONFIG_HEADERS([config.h:config.hin])
@@ -80,6 +82,12 @@ AC_PROG_INSTALL
 AC_PROG_CC
 gl_EARLY
 AC_PROG_RANLIB
+PKG_PROG_PKG_CONFIG([0.9.0])
+
+# grep never invokes mbrtowc or mbrlen on empty input,
+# so don't worry about this common bug,
+# as working around it would merely slow grep down.
+gl_cv_func_mbrtowc_empty_input='assume yes'
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
@@ -94,7 +102,11 @@ AC_ARG_ENABLE([gcc-warnings],
      *)      AC_MSG_ERROR([bad value $enableval for gcc-warnings option]) ;;
    esac
    gl_gcc_warnings=$enableval],
-  [gl_gcc_warnings=no]
+  [if test -d "$srcdir"/.git; then
+     gl_gcc_warnings=yes
+   else
+     gl_gcc_warnings=no
+   fi]
 )
 
 if test "$gl_gcc_warnings" = yes; then
@@ -108,29 +120,14 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wlong-long"              # C90 is anachronistic (lib/gethrxtime.h)
   nw="$nw -Wc++-compat"             # We don't care about C++ compilers
   nw="$nw -Wundef"                  # Warns on '#if GNULIB_FOO' etc in gnulib
-  nw="$nw -Wtraditional"            # Warns on #elif which we use often
-  nw="$nw -Wcast-qual"              # Too many warnings for now
-  nw="$nw -Wconversion"             # Too many warnings for now
   nw="$nw -Wsystem-headers"         # Don't let system headers trigger warnings
-  nw="$nw -Wsign-conversion"        # Too many warnings for now
-  nw="$nw -Wtraditional-conversion" # Too many warnings for now
-  nw="$nw -Wunreachable-code"       # Too many warnings for now
   nw="$nw -Wpadded"                 # Our structs are not padded
-  nw="$nw -Wredundant-decls"        # openat.h declares e.g., mkdirat
-  nw="$nw -Wlogical-op"             # any use of fwrite provokes this
-  nw="$nw -Wformat-nonliteral"      # who.c and pinky.c strftime uses
   nw="$nw -Wvla"                    # warnings in gettext.h
-  nw="$nw -Wnested-externs"         # use of XARGMATCH/verify_function__
-  nw="$nw -Wswitch-enum"            # Too many warnings for now
+  nw="$nw -Wstack-protector"        # generates false alarms for useful code
   nw="$nw -Wswitch-default"         # Too many warnings for now
-  nw="$nw -Wstack-protector"        # not worth working around
-  # things I might fix soon:
-  nw="$nw -Wfloat-equal"            # sort.c, seq.c
-  nw="$nw -Wmissing-format-attribute" # copy.c
-  nw="$nw -Wunsafe-loop-optimizations" # a few src/*.c
-  nw="$nw -Winline"                 # system.h's readdir_ignoring_dot_and_dotdot
-  nw="$nw -Wstrict-overflow"        # expr.c, pr.c, tr.c, factor.c
-  # ?? -Wstrict-overflow
+  nw="$nw -Wunsafe-loop-optimizations" # OK to suppress unsafe optimizations
+  nw="$nw -Winline"                 # streq.h's streq4, streq6 and strcaseeq6
+  nw="$nw -Wstrict-overflow"        # regexec.c
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT([ws], [$ws], [$nw])
@@ -139,31 +136,30 @@ if test "$gl_gcc_warnings" = yes; then
   done
   gl_WARN_ADD([-Wno-missing-field-initializers]) # We need this one
   gl_WARN_ADD([-Wno-sign-compare])     # Too many warnings for now
-  gl_WARN_ADD([-Wno-pointer-sign])     # Too many warnings for now
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
 
   # In spite of excluding -Wlogical-op above, it is enabled, as of
   # gcc 4.5.0 20090517, and it provokes warnings in cat.c, dd.c, truncate.c
   gl_WARN_ADD([-Wno-logical-op])
 
-  gl_WARN_ADD([-fdiagnostics-show-option])
-  gl_WARN_ADD([-funit-at-a-time])
-
   AC_SUBST([WARN_CFLAGS])
 
   AC_DEFINE([lint], [1], [Define to 1 if the compiler is checking for lint.])
-  AC_DEFINE([_FORTIFY_SOURCE], [2],
-    [enable compile-time and run-time bounds-checking, and some warnings])
   AC_DEFINE([GNULIB_PORTCHECK], [1], [enable some gnulib portability checks])
+  AH_VERBATIM([GNULIB_PORTCHECK_FORTIFY_SOURCE],
+  [/* Enable compile-time and run-time bounds-checking, and some warnings,
+      without upsetting glibc 2.15+. */
+   #if (defined GNULIB_PORTCHECK && !defined _FORTIFY_SOURCE \
+        && defined __OPTIMIZE__ && __OPTIMIZE__)
+   # define _FORTIFY_SOURCE 2
+   #endif
+  ])
 
   # We use a slightly smaller set of warning options for lib/.
   # Remove the following and save the result in GNULIB_WARN_CFLAGS.
   nw=
-  #nw="$nw -Wuninitialized"
   nw="$nw -Wunused-macros"
-  #nw="$nw -Wmissing-prototypes"
-  nw="$nw -Wold-style-definition"
-  nw="$nw -Wcast-align"
+  gl_WARN_ADD([-Wno-format-nonliteral])
   gl_MANYWARN_COMPLEMENT([GNULIB_WARN_CFLAGS], [$WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_WARN_CFLAGS])
 fi
@@ -181,10 +177,10 @@ AC_HEADER_DIRENT
 dnl Checks for functions.
 AC_FUNC_CLOSEDIR_VOID
 
-AC_CHECK_FUNCS_ONCE(isascii iswctype setlocale wcscoll)
+AC_CHECK_FUNCS_ONCE(isascii setlocale)
 
 dnl I18N feature
-AM_GNU_GETTEXT_VERSION([0.18])
+AM_GNU_GETTEXT_VERSION([0.18.2])
 AM_GNU_GETTEXT([external])
 
 dnl Some installers want to be informed if we do not use our regex.
@@ -197,6 +193,13 @@ if test "$ac_use_included_regex" = no; then
 fi
 
 gl_FUNC_PCRE
+
+case $host_os in
+  mingw*) suffix=w32 ;;
+  *) suffix=posix ;;
+esac
+COLORIZE_SOURCE=colorize-$suffix.c
+AC_SUBST([COLORIZE_SOURCE])
 
 AC_CONFIG_FILES([
   Makefile

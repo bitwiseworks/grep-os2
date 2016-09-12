@@ -1,5 +1,5 @@
-# printf.m4 serial 46
-dnl Copyright (C) 2003, 2007-2011 Free Software Foundation, Inc.
+# printf.m4 serial 52
+dnl Copyright (C) 2003, 2007-2016 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -61,9 +61,9 @@ changequote(,)dnl
                                  # Guess yes on glibc systems.
            *-gnu*)               gl_cv_func_printf_sizes_c99="guessing yes";;
                                  # Guess yes on FreeBSD >= 5.
-           freebsd[1-4]*)        gl_cv_func_printf_sizes_c99="guessing no";;
+           freebsd[1-4].*)       gl_cv_func_printf_sizes_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_printf_sizes_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_printf_sizes_c99="guessing no";;
            darwin*)              gl_cv_func_printf_sizes_c99="guessing yes";;
                                  # Guess yes on OpenBSD >= 3.9.
@@ -220,9 +220,9 @@ changequote(,)dnl
                                  # Guess yes on glibc systems.
            *-gnu*)               gl_cv_func_printf_infinite="guessing yes";;
                                  # Guess yes on FreeBSD >= 6.
-           freebsd[1-5]*)        gl_cv_func_printf_infinite="guessing no";;
+           freebsd[1-5].*)       gl_cv_func_printf_infinite="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_printf_infinite="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_printf_infinite="guessing no";;
            darwin*)              gl_cv_func_printf_infinite="guessing yes";;
                                  # Guess yes on HP-UX >= 11.
@@ -328,7 +328,7 @@ int main ()
 # ifdef WORDS_BIGENDIAN
 #  define LDBL80_WORDS(exponent,manthi,mantlo) \
      { ((unsigned int) (exponent) << 16) | ((unsigned int) (manthi) >> 16), \
-       ((unsigned int) (manthi) << 16) | (unsigned int) (mantlo) >> 16),    \
+       ((unsigned int) (manthi) << 16) | ((unsigned int) (mantlo) >> 16),   \
        (unsigned int) (mantlo) << 16                                        \
      }
 # else
@@ -365,66 +365,51 @@ int main ()
   { /* Pseudo-NaN.  */
     static union { unsigned int word[4]; long double value; } x =
       { LDBL80_WORDS (0xFFFF, 0x40000001, 0x00000000) };
-    if (sprintf (buf, "%Lf", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lf", x.value) <= 0)
       result |= 4;
-    if (sprintf (buf, "%Le", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Le", x.value) <= 0)
       result |= 4;
-    if (sprintf (buf, "%Lg", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lg", x.value) <= 0)
       result |= 4;
   }
   { /* Pseudo-Infinity.  */
     static union { unsigned int word[4]; long double value; } x =
       { LDBL80_WORDS (0xFFFF, 0x00000000, 0x00000000) };
-    if (sprintf (buf, "%Lf", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lf", x.value) <= 0)
       result |= 8;
-    if (sprintf (buf, "%Le", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Le", x.value) <= 0)
       result |= 8;
-    if (sprintf (buf, "%Lg", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lg", x.value) <= 0)
       result |= 8;
   }
   { /* Pseudo-Zero.  */
     static union { unsigned int word[4]; long double value; } x =
       { LDBL80_WORDS (0x4004, 0x00000000, 0x00000000) };
-    if (sprintf (buf, "%Lf", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lf", x.value) <= 0)
       result |= 16;
-    if (sprintf (buf, "%Le", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Le", x.value) <= 0)
       result |= 16;
-    if (sprintf (buf, "%Lg", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lg", x.value) <= 0)
       result |= 16;
   }
   { /* Unnormalized number.  */
     static union { unsigned int word[4]; long double value; } x =
       { LDBL80_WORDS (0x4000, 0x63333333, 0x00000000) };
-    if (sprintf (buf, "%Lf", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lf", x.value) <= 0)
       result |= 32;
-    if (sprintf (buf, "%Le", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Le", x.value) <= 0)
       result |= 32;
-    if (sprintf (buf, "%Lg", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lg", x.value) <= 0)
       result |= 32;
   }
   { /* Pseudo-Denormal.  */
     static union { unsigned int word[4]; long double value; } x =
       { LDBL80_WORDS (0x0000, 0x83333333, 0x00000000) };
-    if (sprintf (buf, "%Lf", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lf", x.value) <= 0)
       result |= 64;
-    if (sprintf (buf, "%Le", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Le", x.value) <= 0)
       result |= 64;
-    if (sprintf (buf, "%Lg", x.value) < 0
-        || !strisnan (buf, 0, strlen (buf)))
+    if (sprintf (buf, "%Lg", x.value) <= 0)
       result |= 64;
   }
 #endif
@@ -442,7 +427,7 @@ changequote(,)dnl
                                          # Guess yes on glibc systems.
                    *-gnu*)               gl_cv_func_printf_infinite_long_double="guessing yes";;
                                          # Guess yes on FreeBSD >= 6.
-                   freebsd[1-5]*)        gl_cv_func_printf_infinite_long_double="guessing no";;
+                   freebsd[1-5].*)       gl_cv_func_printf_infinite_long_double="guessing no";;
                    freebsd* | kfreebsd*) gl_cv_func_printf_infinite_long_double="guessing yes";;
                                          # Guess yes on HP-UX >= 11.
                    hpux[7-9]* | hpux10*) gl_cv_func_printf_infinite_long_double="guessing no";;
@@ -507,14 +492,14 @@ int main ()
   if (sprintf (buf, "%010a %d", 1.0 / zero, 33, 44, 55) < 0
       || buf[0] == '0')
     result |= 8;
-  /* This catches a MacOS X 10.3.9 (Darwin 7.9) bug.  */
+  /* This catches a Mac OS X 10.3.9 (Darwin 7.9) bug.  */
   if (sprintf (buf, "%.1a", 1.999) < 0
       || (strcmp (buf, "0x1.0p+1") != 0
           && strcmp (buf, "0x2.0p+0") != 0
           && strcmp (buf, "0x4.0p-1") != 0
           && strcmp (buf, "0x8.0p-2") != 0))
     result |= 16;
-  /* This catches the same MacOS X 10.3.9 (Darwin 7.9) bug and also a
+  /* This catches the same Mac OS X 10.3.9 (Darwin 7.9) bug and also a
      glibc 2.4 bug <http://sourceware.org/bugzilla/show_bug.cgi?id=2908>.  */
   if (sprintf (buf, "%.1La", 1.999L) < 0
       || (strcmp (buf, "0x1.0p+1") != 0
@@ -588,9 +573,9 @@ changequote(,)dnl
                                  # Guess yes on glibc systems.
            *-gnu*)               gl_cv_func_printf_directive_f="guessing yes";;
                                  # Guess yes on FreeBSD >= 6.
-           freebsd[1-5]*)        gl_cv_func_printf_directive_f="guessing no";;
+           freebsd[1-5].*)       gl_cv_func_printf_directive_f="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_printf_directive_f="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_printf_directive_f="guessing no";;
            darwin*)              gl_cv_func_printf_directive_f="guessing yes";;
                                  # Guess yes on Solaris >= 2.10.
@@ -952,7 +937,7 @@ int main ()
         [
 changequote(,)dnl
          case "$host_os" in
-           # Guess no only on Solaris, native Win32, and BeOS systems.
+           # Guess no only on Solaris, native Windows, and BeOS systems.
            solaris*)     gl_cv_func_printf_precision="guessing no" ;;
            mingw* | pw*) gl_cv_func_printf_precision="guessing no" ;;
            beos*)        gl_cv_func_printf_precision="guessing no" ;;
@@ -1028,8 +1013,9 @@ int main()
 changequote([,])dnl
           ])])
           if AC_TRY_EVAL([ac_link]) && test -s conftest$ac_exeext; then
-            (./conftest
+            (./conftest 2>&AS_MESSAGE_LOG_FD
              result=$?
+             _AS_ECHO_LOG([\$? = $result])
              if test $result != 0 && test $result != 77; then result=1; fi
              exit $result
             ) >/dev/null 2>/dev/null
@@ -1043,7 +1029,7 @@ changequote([,])dnl
           fi
           rm -fr conftest*
         else
-          dnl A universal build on Apple MacOS X platforms.
+          dnl A universal build on Apple Mac OS X platforms.
           dnl The result would be 'no' in 32-bit mode and 'yes' in 64-bit mode.
           dnl But we need a configuration result that is valid in both modes.
           gl_cv_func_printf_enomem="guessing no"
@@ -1135,9 +1121,9 @@ changequote(,)dnl
                                  # Guess yes on glibc systems.
            *-gnu*)               gl_cv_func_snprintf_truncation_c99="guessing yes";;
                                  # Guess yes on FreeBSD >= 5.
-           freebsd[1-4]*)        gl_cv_func_snprintf_truncation_c99="guessing no";;
+           freebsd[1-4].*)       gl_cv_func_snprintf_truncation_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_snprintf_truncation_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_snprintf_truncation_c99="guessing no";;
            darwin*)              gl_cv_func_snprintf_truncation_c99="guessing yes";;
                                  # Guess yes on OpenBSD >= 3.9.
@@ -1234,9 +1220,9 @@ changequote(,)dnl
                                  # Guess yes on glibc systems.
            *-gnu*)               gl_cv_func_snprintf_retval_c99="guessing yes";;
                                  # Guess yes on FreeBSD >= 5.
-           freebsd[1-4]*)        gl_cv_func_snprintf_retval_c99="guessing no";;
+           freebsd[1-4].*)       gl_cv_func_snprintf_retval_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_snprintf_retval_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_snprintf_retval_c99="guessing no";;
            darwin*)              gl_cv_func_snprintf_retval_c99="guessing yes";;
                                  # Guess yes on OpenBSD >= 3.9.
@@ -1315,9 +1301,9 @@ changequote(,)dnl
                                  # Guess yes on glibc systems.
            *-gnu*)               gl_cv_func_snprintf_directive_n="guessing yes";;
                                  # Guess yes on FreeBSD >= 5.
-           freebsd[1-4]*)        gl_cv_func_snprintf_directive_n="guessing no";;
+           freebsd[1-4].*)       gl_cv_func_snprintf_directive_n="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_snprintf_directive_n="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_snprintf_directive_n="guessing no";;
            darwin*)              gl_cv_func_snprintf_directive_n="guessing yes";;
                                  # Guess yes on Solaris >= 2.6.
@@ -1457,9 +1443,9 @@ changequote(,)dnl
                                  # Guess yes on glibc systems.
            *-gnu*)               gl_cv_func_vsnprintf_zerosize_c99="guessing yes";;
                                  # Guess yes on FreeBSD >= 5.
-           freebsd[1-4]*)        gl_cv_func_vsnprintf_zerosize_c99="guessing no";;
+           freebsd[1-4].*)       gl_cv_func_vsnprintf_zerosize_c99="guessing no";;
            freebsd* | kfreebsd*) gl_cv_func_vsnprintf_zerosize_c99="guessing yes";;
-                                 # Guess yes on MacOS X >= 10.3.
+                                 # Guess yes on Mac OS X >= 10.3.
            darwin[1-6].*)        gl_cv_func_vsnprintf_zerosize_c99="guessing no";;
            darwin*)              gl_cv_func_vsnprintf_zerosize_c99="guessing yes";;
                                  # Guess yes on Cygwin.
@@ -1539,13 +1525,13 @@ dnl                                  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
 dnl   glibc 2.5                      .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 dnl   glibc 2.3.6                    .  .  .  .  #  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .
 dnl   FreeBSD 5.4, 6.1               .  .  .  .  #  .  .  .  .  .  .  #  .  #  .  .  .  .  .  .
-dnl   MacOS X 10.5.8                 .  .  .  #  #  .  .  .  .  .  .  #  .  .  .  .  .  .  .  .
-dnl   MacOS X 10.3.9                 .  .  .  .  #  .  .  .  .  .  .  #  .  #  .  .  .  .  .  .
+dnl   Mac OS X 10.5.8                .  .  .  #  #  .  .  .  .  .  .  #  .  .  .  .  .  .  .  .
+dnl   Mac OS X 10.3.9                .  .  .  .  #  .  .  .  .  .  .  #  .  #  .  .  .  .  .  .
 dnl   OpenBSD 3.9, 4.0               .  .  #  #  #  #  .  #  .  #  .  #  .  #  .  .  .  .  .  .
 dnl   Cygwin 1.7.0 (2009)            .  .  .  #  .  .  .  ?  .  .  .  .  .  ?  .  .  .  .  .  .
 dnl   Cygwin 1.5.25 (2008)           .  .  .  #  #  .  .  #  .  .  .  .  .  #  .  .  .  .  .  .
 dnl   Cygwin 1.5.19 (2006)           #  .  .  #  #  #  .  #  .  #  .  #  #  #  .  .  .  .  .  .
-dnl   Solaris 11 2010-11             .  .  #  #  #  .  .  #  .  .  .  #  .  .  .  .  .  .  .  .
+dnl   Solaris 11 2011-11             .  .  #  #  #  .  .  #  .  .  .  #  .  .  .  .  .  .  .  .
 dnl   Solaris 10                     .  .  #  #  #  .  .  #  .  .  .  #  #  .  .  .  .  .  .  .
 dnl   Solaris 2.6 ... 9              #  .  #  #  #  #  .  #  .  .  .  #  #  .  .  .  #  .  .  .
 dnl   Solaris 2.5.1                  #  .  #  #  #  #  .  #  .  .  .  #  .  .  #  #  #  #  #  #
