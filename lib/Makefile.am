@@ -1,4 +1,4 @@
-# Copyright 1997-1998, 2005-2011 Free Software Foundation, Inc.
+# Copyright 1997-1998, 2005-2016 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,14 +14,28 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-include gnulib.mk
+AM_CFLAGS =
+AM_CPPFLAGS =
+BUILT_SOURCES =
+CLEANFILES =
+EXTRA_DIST =
+MAINTAINERCLEANFILES =
+MOSTLYCLEANDIRS =
+MOSTLYCLEANFILES =
+SUFFIXES =
+noinst_LIBRARIES =
 
-INCLUDES = -I.. -I$(srcdir)
+include gnulib.mk
 
 AM_CFLAGS += $(GNULIB_WARN_CFLAGS) $(WERROR_CFLAGS)
 
-libgreputils_a_SOURCES += \
-  savedir.c savedir.h
+nodist_libgreputils_a_SOURCES = colorize.c
+libgreputils_a_SOURCES += colorize.h
+EXTRA_DIST += colorize-posix.c colorize-w32.c
+CLEANFILES += colorize.c
+colorize.c:
+	$(AM_V_at)echo '#include <$(COLORIZE_SOURCE)>' >$@-t
+	$(AM_V_at)mv $@-t $@
 
 libgreputils_a_LIBADD += $(LIBOBJS) $(ALLOCA)
 libgreputils_a_DEPENDENCIES += $(LIBOBJS) $(ALLOCA)

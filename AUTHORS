@@ -1,4 +1,4 @@
-  Copyright (C) 1992, 1997-2002, 2004-2011 Free Software Foundation, Inc.
+  Copyright (C) 1992, 1997-2002, 2004-2016 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
@@ -41,7 +41,7 @@ for complete details and credits.
 Arnold Robbins contributed to improve dfa.[ch]. In fact
 it came straight from gawk-3.0.3 with small editing and fixes.
 
-Many folks contributed see THANKS, if I omited someone please
+Many folks contributed.  See THANKS; if I omitted someone please
 send me email.
 
 Alain Magloire maintained GNU grep until version 2.5e.
@@ -53,7 +53,8 @@ Stepan Kasal <kasal@ucw.cz> maintained GNU grep since Feb 2004.
 
 Tony Abou-Assaleh <taa@acm.org> maintains GNU grep since Oct 2007.
 
-Jim Meyering <jim@meyering.net> and Paolo Bonzini <bonzini@gnu.org> maintain GNU grep since Nov 2009.
+Jim Meyering <jim@meyering.net> and Paolo Bonzini <bonzini@gnu.org>
+began maintaining GNU grep in Nov 2009.  Paolo bowed out in 2012.
 
 ;; Local Variables:
 ;; coding: utf-8

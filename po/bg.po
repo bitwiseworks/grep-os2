@@ -1,219 +1,238 @@
-# GNU grep messages translated in Bulgarian language.
-# Copyright (C) 2002 Free Software Foundation, Inc.
+# Bulgarian translation of GNU grep po-file.
+# Copyright (C) 2002, 2015 Free Software Foundation, Inc.
+# This file is distributed under the same license as the grep package.
 # Pavel Mihaylov <avatarbg@bulgaria.com>, 2002.
-#
+# Alexander Shopov <ash@kambanaria.org>, 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.5g\n"
+"Project-Id-Version: grep-2.21.78\n"
 "Report-Msgid-Bugs-To: bug-grep@gnu.org\n"
-"POT-Creation-Date: 2011-11-16 14:03+0100\n"
-"PO-Revision-Date: 2002-03-09 02:00+0200\n"
-"Last-Translator: Pavel Mihaylov <avatarbg@bulgaria.com>\n"
-"Language-Team: Bulgarian <bg@bulgaria.com>\n"
+"POT-Creation-Date: 2016-04-21 21:37-0700\n"
+"PO-Revision-Date: 2015-11-26 21:58+0200\n"
+"Last-Translator: Alexander Shopov <ash@kambanaria.org>\n"
+"Language-Team: Bulgarian <dict@ludost.net>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/argmatch.c:133
-#, fuzzy, c-format
+#, c-format
 msgid "invalid argument %s for %s"
-msgstr "невалиден максимален брой"
+msgstr "аргументът „%s“ на опцията „%s“ е неправилен"
 
 #: lib/argmatch.c:134
 #, c-format
 msgid "ambiguous argument %s for %s"
-msgstr ""
+msgstr "аргументът „%s“ на опцията „%s“ не е еднозначен"
 
 #: lib/argmatch.c:153
-#, c-format
 msgid "Valid arguments are:"
-msgstr ""
+msgstr "Възможните аргументи са:"
 
-#: lib/closeout.c:112
+#: lib/closeout.c:112 src/grep.c:1238
+#, c-format
 msgid "write error"
-msgstr ""
+msgstr "грешка при запис"
 
-#: lib/error.c:187
+#: lib/error.c:191
 msgid "Unknown system error"
 msgstr "Неизвестна системна грешка"
 
-#: lib/getopt.c:547 lib/getopt.c:576
-#, fuzzy, c-format
+#: lib/getopt.c:575 lib/getopt.c:604
+#, c-format
 msgid "%s: option '%s' is ambiguous; possibilities:"
-msgstr "%s: опция `%s' не е еднозначна\n"
+msgstr "%s: опцията „%s“ не е еднозначна. Възможности:"
 
-#: lib/getopt.c:624 lib/getopt.c:628
-#, fuzzy, c-format
+#: lib/getopt.c:619
+#, c-format
+msgid "%s: option '%s' is ambiguous\n"
+msgstr "%s: опцията „%s“ не е еднозначна\n"
+
+#: lib/getopt.c:654 lib/getopt.c:658
+#, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
-msgstr "%s: опция `--%s' се използва без аргумент\n"
+msgstr "%s: опцията „--%s“ се използва без аргументи\n"
 
-#: lib/getopt.c:637 lib/getopt.c:642
-#, fuzzy, c-format
+#: lib/getopt.c:667 lib/getopt.c:672
+#, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
-msgstr "%s: опция `%c%s' се използва без аргумент\n"
+msgstr "%s: опцията „%c%s“ се използва без аргументи\n"
 
-#: lib/getopt.c:685 lib/getopt.c:704
-#, fuzzy, c-format
+#: lib/getopt.c:715 lib/getopt.c:734
+#, c-format
 msgid "%s: option '--%s' requires an argument\n"
-msgstr "%s: опция `%s' изисква аргумент\n"
+msgstr "%s: опцията „--%s“ изисква аргумент\n"
 
-#: lib/getopt.c:742 lib/getopt.c:745
-#, fuzzy, c-format
+#: lib/getopt.c:772 lib/getopt.c:775
+#, c-format
 msgid "%s: unrecognized option '--%s'\n"
-msgstr "%s: непозната опция `--%s'\n"
+msgstr "%s: непозната опция „--%s“\n"
 
-#: lib/getopt.c:753 lib/getopt.c:756
-#, fuzzy, c-format
+#: lib/getopt.c:783 lib/getopt.c:786
+#, c-format
 msgid "%s: unrecognized option '%c%s'\n"
-msgstr "%s: непозната опция `%c%s'\n"
+msgstr "%s: непозната опция „%c%s“\n"
 
-#: lib/getopt.c:805 lib/getopt.c:808
-#, fuzzy, c-format
+#: lib/getopt.c:835 lib/getopt.c:838
+#, c-format
 msgid "%s: invalid option -- '%c'\n"
-msgstr "%s: невалидна опция -- %c\n"
+msgstr "%s: неправилна опция — „%c“\n"
 
-#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
-#, fuzzy, c-format
+#: lib/getopt.c:891 lib/getopt.c:908 lib/getopt.c:1118 lib/getopt.c:1136
+#, c-format
 msgid "%s: option requires an argument -- '%c'\n"
-msgstr "%s: опция изискваща аргумент -- %c\n"
+msgstr "%s: опцията изисква аргумент — „%c“\n"
 
-#: lib/getopt.c:934 lib/getopt.c:950
-#, fuzzy, c-format
+#: lib/getopt.c:964 lib/getopt.c:980
+#, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
-msgstr "%s: опция `-W %s' не е еднозначна\n"
+msgstr "%s: опцията „-W %s“ не е еднозначна\n"
 
-#: lib/getopt.c:974 lib/getopt.c:992
-#, fuzzy, c-format
+#: lib/getopt.c:1004 lib/getopt.c:1022
+#, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
-msgstr "%s: опция `-W %s' се използва без аргумент\n"
+msgstr "%s: опцията „-W %s“ се използва без аргументи\n"
 
-#: lib/getopt.c:1013 lib/getopt.c:1031
-#, fuzzy, c-format
+#: lib/getopt.c:1043 lib/getopt.c:1061
+#, c-format
 msgid "%s: option '-W %s' requires an argument\n"
-msgstr "%s: опция `%s' изисква аргумент\n"
+msgstr "%s: опцията „-W %s“ изисква аргумент\n"
 
-#: lib/obstack.c:413 lib/obstack.c:415 lib/xalloc-die.c:34 src/kwset.c:178
-#: src/kwset.c:186 src/kwset.c:409 src/pcresearch.c:150
+#: lib/obstack.c:338 lib/obstack.c:340 lib/xalloc-die.c:34 src/pcresearch.c:340
 #, c-format
 msgid "memory exhausted"
 msgstr "паметта е изчерпана"
 
+#: lib/openat-die.c:38
+#, c-format
+msgid "unable to record current working directory"
+msgstr "не може да се запише коя е текущата работна директория"
+
+#: lib/openat-die.c:57
+#, c-format
+msgid "failed to return to initial working directory"
+msgstr "не може да се върне към първоначалната работна директория"
+
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
-#.
 #. The message catalog should translate "`" to a left
 #. quotation mark suitable for the locale, and similarly for
-#. "'".  If the catalog has no translation,
-#. locale_quoting_style quotes `like this', and
-#. clocale_quoting_style quotes "like this".
+#. "'".  For example, a French Unicode local should translate
+#. these to U+00AB (LEFT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), and U+00BB (RIGHT-POINTING DOUBLE ANGLE
+#. QUOTATION MARK), respectively.
 #.
-#. For example, an American English Unicode locale should
-#. translate "`" to U+201C (LEFT DOUBLE QUOTATION MARK), and
-#. should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
-#. MARK).  A British English Unicode locale should instead
-#. translate these to U+2018 (LEFT SINGLE QUOTATION MARK)
-#. and U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+#. If the catalog has no translation, we will try to
+#. use Unicode U+2018 (LEFT SINGLE QUOTATION MARK) and
+#. Unicode U+2019 (RIGHT SINGLE QUOTATION MARK).  If the
+#. current locale is not Unicode, locale_quoting_style
+#. will quote 'like this', and clocale_quoting_style will
+#. quote "like this".  You should always include translations
+#. for "`" and "'" even if U+2018 and U+2019 are appropriate
+#. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
+#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:271
+#: lib/quotearg.c:347
 msgid "`"
-msgstr "\""
+msgstr "„"
 
-#: lib/quotearg.c:272
+#: lib/quotearg.c:348
 msgid "'"
-msgstr "\""
+msgstr "“"
 
-#: lib/regcomp.c:133
+#: lib/regcomp.c:135
 msgid "Success"
-msgstr ""
+msgstr "Успех"
 
-#: lib/regcomp.c:136
+#: lib/regcomp.c:138
 msgid "No match"
-msgstr ""
+msgstr "Няма съвпадения"
 
-#: lib/regcomp.c:139
+#: lib/regcomp.c:141
 msgid "Invalid regular expression"
-msgstr ""
+msgstr "Неправилен регулярен израз"
 
-#: lib/regcomp.c:142
+#: lib/regcomp.c:144
 msgid "Invalid collation character"
-msgstr ""
+msgstr "Неправилен знак за подредба"
 
-#: lib/regcomp.c:145
+#: lib/regcomp.c:147
 msgid "Invalid character class name"
-msgstr ""
+msgstr "Неправилно име на клас знаци"
 
-#: lib/regcomp.c:148
+#: lib/regcomp.c:150
 msgid "Trailing backslash"
-msgstr ""
+msgstr "Обратно наклонена черта в края"
 
-#: lib/regcomp.c:151
+#: lib/regcomp.c:153
 msgid "Invalid back reference"
-msgstr ""
+msgstr "Неправилна препратка към съвпадение"
 
-#: lib/regcomp.c:154
-msgid "Unmatched [ or [^"
-msgstr ""
+#: lib/regcomp.c:156
+#, fuzzy
+msgid "Unmatched [, [^, [:, [., or [="
+msgstr "„[“ или „[^“ без еш"
 
-#: lib/regcomp.c:157
+#: lib/regcomp.c:159
 msgid "Unmatched ( or \\("
-msgstr ""
+msgstr "„(“ или „\\(“ без еш"
 
-#: lib/regcomp.c:160
+#: lib/regcomp.c:162
 msgid "Unmatched \\{"
-msgstr ""
+msgstr "„\\{“ без еш"
 
-#: lib/regcomp.c:163
+#: lib/regcomp.c:165
 msgid "Invalid content of \\{\\}"
-msgstr ""
+msgstr "Неправилно съдържание в „\\{\\}“"
 
-#: lib/regcomp.c:166
+#: lib/regcomp.c:168
 msgid "Invalid range end"
-msgstr ""
+msgstr "Неправилен край на диапазон"
 
-#: lib/regcomp.c:169
+#: lib/regcomp.c:171
 msgid "Memory exhausted"
-msgstr "Паметта е изчерпана"
+msgstr "Паметта свърши"
 
-#: lib/regcomp.c:172
+#: lib/regcomp.c:174
 msgid "Invalid preceding regular expression"
-msgstr ""
+msgstr "Неправилен предхождащ регулярен израз"
 
-#: lib/regcomp.c:175
+#: lib/regcomp.c:177
 msgid "Premature end of regular expression"
-msgstr ""
+msgstr "Ранен край на регулярен израз"
 
-#: lib/regcomp.c:178
+#: lib/regcomp.c:180
 msgid "Regular expression too big"
-msgstr ""
+msgstr "Регулярният израз е прекалено голям"
 
-#: lib/regcomp.c:181
+#: lib/regcomp.c:183
 msgid "Unmatched ) or \\)"
-msgstr ""
+msgstr "„)“ или „\\)“ без еш"
 
-#: lib/regcomp.c:702
+#: lib/regcomp.c:687
 msgid "No previous regular expression"
-msgstr ""
+msgstr "Липсва предхождащ регулярен израз"
 
 #: lib/version-etc.c:74
 #, c-format
 msgid "Packaged by %s (%s)\n"
-msgstr ""
+msgstr "Пакетирано от %s (%s)\n"
 
 #: lib/version-etc.c:77
 #, c-format
 msgid "Packaged by %s\n"
-msgstr ""
+msgstr "Пакетирано от %s\n"
 
 #. TRANSLATORS: Translate "(C)" to the copyright symbol
 #. (C-in-a-circle), if this symbol is available in the user's
 #. locale.  Otherwise, do not translate "(C)"; leave it as-is.
 #: lib/version-etc.c:84
 msgid "(C)"
-msgstr ""
+msgstr "©"
 
 #: lib/version-etc.c:86
 msgid ""
@@ -224,24 +243,33 @@ msgid ""
 "There is NO WARRANTY, to the extent permitted by law.\n"
 "\n"
 msgstr ""
+"\n"
+"Лиценз — Общ публичен лиценз на GNU (GNU GPL), както е публикуван от "
+"Фондацията\n"
+"за свободен софтуер — версия 3 на лиценза или (по ваше решение) по-късна "
+"версия.\n"
+"<http://gnu.org/licenses/gpl.html>\n"
+"Тази програма е свободен софтуер. Можете да я разпространявате и/или "
+"променяте.\n"
+"Тя се разпространява БЕЗ НИКАКВИ ГАРАНЦИИ доколкото е позволено от закона.\n"
 
 #. TRANSLATORS: %s denotes an author name.
 #: lib/version-etc.c:102
 #, c-format
 msgid "Written by %s.\n"
-msgstr ""
+msgstr "Създадено от %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #: lib/version-etc.c:106
 #, c-format
 msgid "Written by %s and %s.\n"
-msgstr ""
+msgstr "Създадено от %s и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #: lib/version-etc.c:110
 #, c-format
 msgid "Written by %s, %s, and %s.\n"
-msgstr ""
+msgstr "Създадено от %s, %s и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
@@ -252,6 +280,8 @@ msgid ""
 "Written by %s, %s, %s,\n"
 "and %s.\n"
 msgstr ""
+"Създадено от %s, %s, %s\n"
+"и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
@@ -262,6 +292,8 @@ msgid ""
 "Written by %s, %s, %s,\n"
 "%s, and %s.\n"
 msgstr ""
+"Създадено от %s, %s, %s,\n"
+"%s и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
@@ -272,6 +304,8 @@ msgid ""
 "Written by %s, %s, %s,\n"
 "%s, %s, and %s.\n"
 msgstr ""
+"Създадено от %s, %s, %s,\n"
+"%s, %s и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
@@ -282,6 +316,8 @@ msgid ""
 "Written by %s, %s, %s,\n"
 "%s, %s, %s, and %s.\n"
 msgstr ""
+"Създадено от %s, %s, %s,\n"
+"%s, %s, %s и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
@@ -293,6 +329,9 @@ msgid ""
 "%s, %s, %s, %s,\n"
 "and %s.\n"
 msgstr ""
+"Създадено от %s, %s, %s,\n"
+"%s, %s, %s, %s\n"
+"и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
@@ -304,6 +343,9 @@ msgid ""
 "%s, %s, %s, %s,\n"
 "%s, and %s.\n"
 msgstr ""
+"Създадено от %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s и %s.\n"
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
@@ -315,215 +357,190 @@ msgid ""
 "%s, %s, %s, %s,\n"
 "%s, %s, and others.\n"
 msgstr ""
+"Създадено от %s, %s, %s,\n"
+"%s, %s, %s, %s,\n"
+"%s, %s и др.\n"
 
 #. TRANSLATORS: The placeholder indicates the bug-reporting address
 #. for this package.  Please add _another line_ saying
 #. "Report translation bugs to <...>\n" with the address for translation
 #. bugs (typically your translation team's web or email address).
-#: lib/version-etc.c:245 src/main.c:1496
+#: lib/version-etc.c:245
 #, c-format
 msgid ""
 "\n"
 "Report bugs to: %s\n"
 msgstr ""
+"\n"
+"Докладвайте грешки в програмата на адрес: %s\n"
+"Докладвайте грешки в превода на адрес: <dict@ludost.net>\n"
 
 #: lib/version-etc.c:247
 #, c-format
 msgid "Report %s bugs to: %s\n"
-msgstr ""
+msgstr "Докладвайте грешки в „%s“ на адрес: %s\n"
 
 #: lib/version-etc.c:251
 #, c-format
 msgid "%s home page: <%s>\n"
-msgstr ""
+msgstr "Уеб страница на „%s“: <%s>\n"
 
 #: lib/version-etc.c:253
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
-msgstr ""
+msgstr "Уеб страница на „%s“: <http://www.gnu.org/software/%s/>\n"
 
-#: lib/version-etc.c:256 src/main.c:1499
+#: lib/version-etc.c:256
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
-msgstr ""
+msgstr "Обща помощ за програмите на GNU: <http://www.gnu.org/gethelp/>\n"
 
 #: lib/xstrtol-error.c:63
 #, c-format
-msgid "invalid %s%s argument `%s'"
-msgstr ""
+msgid "invalid %s%s argument '%s'"
+msgstr "неправилен аргумент „%3$s“ за опцията „%1$s%2$s“"
 
 #: lib/xstrtol-error.c:68
 #, c-format
-msgid "invalid suffix in %s%s argument `%s'"
-msgstr ""
+msgid "invalid suffix in %s%s argument '%s'"
+msgstr "неправилен суфикс в аргумента „%3$s“ за опцията „%1$s%2$s“"
 
 #: lib/xstrtol-error.c:72
 #, c-format
-msgid "%s%s argument `%s' too large"
-msgstr ""
+msgid "%s%s argument '%s' too large"
+msgstr "прекалено дълъг аргумент „%3$s“ за опцията „%1$s%2$s“"
 
-#: src/dfa.c:813 src/dfa.c:816 src/dfa.c:837 src/dfa.c:848 src/dfa.c:860
-#: src/dfa.c:922 src/dfa.c:931 src/dfa.c:934 src/dfa.c:939 src/dfa.c:953
-#: src/dfa.c:1016
-#, fuzzy
+#: src/dfa.c:990 src/dfa.c:993 src/dfa.c:1012 src/dfa.c:1022 src/dfa.c:1034
+#: src/dfa.c:1061 src/dfa.c:1070 src/dfa.c:1073 src/dfa.c:1078 src/dfa.c:1099
+#: src/dfa.c:1102
 msgid "unbalanced ["
-msgstr "Небалансирана ["
+msgstr "„[“ без еш"
 
-#: src/dfa.c:871
+#: src/dfa.c:1046
 msgid "invalid character class"
-msgstr ""
+msgstr "неправилен клас за знаци"
 
-#: src/dfa.c:1053
+#: src/dfa.c:1168
 msgid "character class syntax is [[:space:]], not [:space:]"
-msgstr ""
+msgstr "синтаксисът на класовете от знаци е „[[:space:]]“, а не „[:space:]“"
 
-#: src/dfa.c:1108
-#, fuzzy
+#: src/dfa.c:1230
 msgid "unfinished \\ escape"
-msgstr "Незавършена \\ последователност"
+msgstr "незавършена екранираща последователност чрез „\\“"
 
-#: src/dfa.c:1241 src/dfa.c:1247 src/dfa.c:1257 src/dfa.c:1265 src/dfa.c:1280
-msgid "unfinished repeat count"
-msgstr "незавършен брой повторения"
+#: src/dfa.c:1377
+msgid "invalid content of \\{\\}"
+msgstr "неправилно съдържание в „\\{\\}“"
 
-#: src/dfa.c:1254 src/dfa.c:1271 src/dfa.c:1279 src/dfa.c:1283
-msgid "malformed repeat count"
-msgstr "грешно зададен брой повторения"
+#: src/dfa.c:1380
+msgid "regular expression too big"
+msgstr "прекалено голям регулярен израз"
 
-#: src/dfa.c:1664
-#, fuzzy
+#: src/dfa.c:1796
 msgid "unbalanced ("
-msgstr "Небалансирана ("
+msgstr "„(“ без еш"
 
-#: src/dfa.c:1793
-#, fuzzy
+#: src/dfa.c:1922
 msgid "no syntax specified"
-msgstr "Не е зададен синтаксис"
+msgstr "не е зададен синтаксис"
 
-#: src/dfa.c:1801
-#, fuzzy
+#: src/dfa.c:1930
 msgid "unbalanced )"
-msgstr "Небалансирана )"
-
-#: src/egrep.c:16
-msgid "PATTERN is an extended regular expression (ERE).\n"
-msgstr ""
-
-#: src/egrep.c:18
-msgid "Invocation as `egrep' is deprecated; use `grep -E' instead.\n"
-msgstr ""
-
-#: src/fgrep.c:10
-msgid "PATTERN is a set of newline-separated fixed strings.\n"
-msgstr ""
-
-#: src/fgrep.c:12
-msgid "Invocation as `fgrep' is deprecated; use `grep -F' instead.\n"
-msgstr ""
-
-#: src/grep.c:32
-msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
-msgstr ""
-
-#: src/grep.c:34
-msgid ""
-"`egrep' means `grep -E'.  `fgrep' means `grep -F'.\n"
-"Direct invocation as either `egrep' or `fgrep' is deprecated.\n"
-msgstr ""
+msgstr "„)“ без еш"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/main.c:60
+#: src/grep.c:58
 msgid "Mike Haertel"
-msgstr ""
+msgstr "Mike Haertel"
 
-#: src/main.c:61
+#: src/grep.c:59
 msgid "others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
-msgstr ""
+msgstr "и др., вижте <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
 
-#: src/main.c:424
+#: src/grep.c:689
 msgid "invalid context length argument"
-msgstr "невалиден размер на контекста"
+msgstr "неправилен размер на контекста"
 
-#: src/main.c:479
-#, c-format
-msgid "lseek failed"
-msgstr ""
-
-#: src/main.c:626
+#: src/grep.c:753
 #, c-format
 msgid "input is too large to count"
-msgstr "входните данни са прекалено големи за да бъдат преброени"
+msgstr "входните данни са прекалено големи, за да бъдат преброени"
 
-#: src/main.c:868
-#, c-format
-msgid "writing output"
-msgstr "записване на изходните данни"
+#: src/grep.c:795
+msgid "lseek failed"
+msgstr "неуспешно изпълнение на „lseek“"
 
-#: src/main.c:1191
+#: src/grep.c:1539
 #, c-format
 msgid "Binary file %s matches\n"
-msgstr "Двоичен файл %s съвпада\n"
+msgstr "Двоичният файл „%s“ напасва\n"
 
-#: src/main.c:1205
+#: src/grep.c:1588
+#, c-format
+msgid "warning: %s: %s"
+msgstr "предупреждение: %s: %s"
+
+#: src/grep.c:1589
+msgid "recursive directory loop"
+msgstr "зацикляне при рекурсивна обработка на директориите"
+
+#: src/grep.c:1758
+#, c-format
+msgid "input file %s is also the output"
+msgstr "входният файл „%s“ е и изходен"
+
+#: src/grep.c:1820
 msgid "(standard input)"
 msgstr "(стандартен вход)"
 
-#: src/main.c:1232
-#, c-format
-msgid "input file %s is also the output"
-msgstr ""
-
-#: src/main.c:1352
-#, fuzzy, c-format
-msgid "warning: %s: %s"
-msgstr "предупреждение: %s: %s\n"
-
-#: src/main.c:1353
-msgid "recursive directory loop"
-msgstr "рекурсивна обработка на директориите"
-
-#: src/main.c:1401 src/main.c:1408
+#: src/grep.c:1836 src/grep.c:1843
 #, c-format
 msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
-msgstr "Употреба: %s [ОПЦИЯ]... ТЕКСТ [ФАЙЛ]...\n"
+msgstr "Употреба: %s [ОПЦИЯ]… ШАБЛОН [ФАЙЛ]…\n"
 
-#: src/main.c:1403
+#: src/grep.c:1838
 #, c-format
-msgid "Try `%s --help' for more information.\n"
-msgstr "Вижте `%s --help' за повече информация.\n"
+msgid "Try '%s --help' for more information.\n"
+msgstr "Вижте „%s --help“ за повече информация.\n"
 
-#: src/main.c:1409
+#: src/grep.c:1844
 #, c-format
 msgid "Search for PATTERN in each FILE or standard input.\n"
 msgstr ""
+"Търсене на текст, напасващ с ШАБЛОНа във всеки зададен ФАЙЛ или от "
+"стандартния вход.\n"
 
-#: src/main.c:1412
-#, fuzzy, c-format
+#: src/grep.c:1845
+#, c-format
+msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+msgstr "Стандартно ШАБЛОНът е основен регулярен израз.\n"
+
+#: src/grep.c:1846
+#, c-format
 msgid ""
 "Example: %s -i 'hello world' menu.h main.c\n"
 "\n"
 "Regexp selection and interpretation:\n"
 msgstr ""
-"Търси ТЕКСТ във всеки ФАЙЛ или в стандартия вход.\n"
 "Пример: %s -i 'hello world' menu.h main.c\n"
 "\n"
-"Избор на типа регулярен израз и интерпретация:\n"
+"Избор на вида регулярен израз и интерпретация:\n"
 
-#: src/main.c:1417
-#, fuzzy, c-format
+#: src/grep.c:1850
+#, c-format
 msgid ""
 "  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
-"  -F, --fixed-strings       PATTERN is a set of newline-separated fixed "
-"strings\n"
+"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
 "  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
 "  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
 msgstr ""
-"  -E, --extended-regexp     ТЕКСТ е разширен регулярен израз\n"
-"  -F, --fixed-regexp        ТЕКСТ е фиксиран низ, отделен с нови редове\n"
-"  -G, --basic-regexp        ТЕКСТ е прост регулярен израз\n"
-"  -P, --perl-regexp         ТЕКСТ е Perl регулярен израз\n"
+"  -E, --extended-regexp     ШАБЛОНът е разширен регулярен израз\n"
+"  -F, --fixed-regexp        ШАБЛОНът е от дословни низове, разделени с\n"
+"                            нови редове\n"
+"  -G, --basic-regexp        ШАБЛОНът е основен регулярен израз\n"
+"  -P, --perl-regexp         ШАБЛОНът е регулярен израз на Perl\n"
 
-#: src/main.c:1423
-#, fuzzy, c-format
+#: src/grep.c:1856
+#, c-format
 msgid ""
 "  -e, --regexp=PATTERN      use PATTERN for matching\n"
 "  -f, --file=FILE           obtain PATTERN from FILE\n"
@@ -532,34 +549,32 @@ msgid ""
 "  -x, --line-regexp         force PATTERN to match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
-"  -e, --regexp=ТЕКСТ        използва ТЕКСТ като регулярен израз\n"
-"  -f, --file=ФАЙЛ           получава ТЕКСТ от ФАЙЛ\n"
-"  -i, --ignore-case         игнорира различието в малки и главни букви\n"
-"  -w, --word-regexp         ТЕКСТ ще съвпада само с цели думи\n"
-"  -x, --line-regexp         ТЕКСТ ще съвпада само с цели редове\n"
-"  -z, --null-data           редовете във ФАЙЛ завършват с 0 (NULL),\n"
-"                            а не със символ за нов ред (LF)\n"
+"  -e, --regexp=ШАБЛОН       ШАБЛОН за регулярен израз\n"
+"  -f, --file=ФАЙЛ           изчитане на ШАБЛОНа от ФАЙЛ\n"
+"  -i, --ignore-case         без разлика между главни и малки букви\n"
+"  -w, --word-regexp         ШАБЛОНът да съвпада само с цели думи\n"
+"  -x, --line-regexp         ШАБЛОНът да съвпада само с цели редове\n"
+"  -z, --null-data           редовете завършват с NULL, а не със знак за нов "
+"ред\n"
 
-#: src/main.c:1430
-#, fuzzy, c-format
+#: src/grep.c:1863
+#, c-format
 msgid ""
 "\n"
 "Miscellaneous:\n"
 "  -s, --no-messages         suppress error messages\n"
 "  -v, --invert-match        select non-matching lines\n"
-"  -V, --version             print version information and exit\n"
-"      --help                display this help and exit\n"
-"      --mmap                ignored for backwards compatibility\n"
+"  -V, --version             display version information and exit\n"
+"      --help                display this help text and exit\n"
 msgstr ""
 "\n"
 "Разни:\n"
-"  -s, --no-messages         не извежда съобщения за грешки\n"
-"  -v, --revert-match        избира несъвпадащи редове\n"
-"  -V, --version             извежда информация за версията и излиза\n"
-"      --help                показва помощна информация и излиза\n"
-"      --mmap                използва memory-mapped вход ако е възможно\n"
+"  -s, --no-messages         без съобщения за грешки\n"
+"  -v, --revert-match        извеждане на несъвпадащите редове\n"
+"  -V, --version             извеждане на информация за версията и изход\n"
+"      --help                извеждане на помощна информация и изход\n"
 
-#: src/main.c:1438
+#: src/grep.c:1870
 #, c-format
 msgid ""
 "\n"
@@ -573,29 +588,61 @@ msgid ""
 "      --label=LABEL         use LABEL as the standard input file name "
 "prefix\n"
 msgstr ""
+"\n"
+"Управление на резултата:\n"
+"  -m, --max-count=БРОЙ      спиране след този БРОЙ резултати\n"
+"  -b, --byte-offset         извеждане на отместването в байтове за всеки "
+"ред\n"
+"  -n, --line-number         извеждане на номерата на редовете\n"
+"      --line-buffered       буфериране по редове\n"
+"  -H, --with-filename       извеждане на името на файла при всяко "
+"съвпадение\n"
+"  -h, --no-filename         без извеждане на името на файла за всяко "
+"съвпадение\n"
+"      --label=ЕТИКЕТ        използване на ЕТИКЕТ като име за стандартния "
+"вход\n"
 
-#: src/main.c:1449
+#: src/grep.c:1881
 #, c-format
 msgid ""
 "  -o, --only-matching       show only the part of a line matching PATTERN\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
 "      --binary-files=TYPE   assume that binary files are TYPE;\n"
-"                            TYPE is `binary', `text', or `without-match'\n"
+"                            TYPE is 'binary', 'text', or 'without-match'\n"
 "  -a, --text                equivalent to --binary-files=text\n"
 msgstr ""
+"  -o, --only-matching       извеждане само на съвпадението, а не целия ред\n"
+"  -q, --quiet, --silent     нищо не се извежда, само се задава изходен код\n"
+"      --binary-files=ВИД    двоичните файлове да се третират като такъв ВИД\n"
+"                            ВИДът може да „binary“ (двоичен), "
+"„text“ (текстов),\n"
+"                            или „without-match“ (без съвпадение).\n"
+"  -a, --text                същото като „--binary-files=text“\n"
 
-#: src/main.c:1456
+#: src/grep.c:1888
 #, c-format
 msgid ""
 "  -I                        equivalent to --binary-files=without-match\n"
 "  -d, --directories=ACTION  how to handle directories;\n"
-"                            ACTION is `read', `recurse', or `skip'\n"
+"                            ACTION is 'read', 'recurse', or 'skip'\n"
 "  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
-"                            ACTION is `read' or `skip'\n"
-"  -R, -r, --recursive       equivalent to --directories=recurse\n"
+"                            ACTION is 'read' or 'skip'\n"
+"  -r, --recursive           like --directories=recurse\n"
+"  -R, --dereference-recursive  likewise, but follow all symlinks\n"
 msgstr ""
+"  -I                        същото като „--binary-files=without-match“\n"
+"  -d, --directories=ДЕЙСТВИЕ\n"
+"                            ДЕЙСТВИЕ при директориите. То може да е:\n"
+"                            „read“ (изчитане), „recurse“ (рекурсивно "
+"търсене)\n"
+"                            или „skip“ (пропускане)\n"
+"  -D, --devices=ДЕЙСТВИЕ    ДЕЙСТВИЕ за специалните файлове, програмните "
+"канали\n"
+"                            и гнездата. То може да е „read“ (изчитане) или\n"
+"                            „skip“ (пропускане)\n"
+"  -R, -r, --recursive       същото като „--directories=recurse“\n"
 
-#: src/main.c:1464
+#: src/grep.c:1897
 #, c-format
 msgid ""
 "      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
@@ -605,8 +652,19 @@ msgid ""
 "      --exclude-dir=PATTERN  directories that match PATTERN will be "
 "skipped.\n"
 msgstr ""
+"      --include=ШАБЛОН_ЗА_ИМЕ\n"
+"                            търсене само във файлове с имена, напасващи\n"
+"                            ШАБЛОНа_ЗА_ИМЕ\n"
+"      --exclude=ШАБЛОН_ЗА_ИМЕ\n"
+"                            пропускане на файлове с имена, напасващи\n"
+"                            ШАБЛОНа_ЗА_ИМЕ\n"
+"      --exclude-from=ФАЙЛ   пропускане на файлове с имена, напасващи на\n"
+"                            шаблоните в този ФАЙЛ\n"
+"      --exclude-dir=ШАБЛОН_ЗА_ИМЕ\n"
+"                            пропускане на директории с имена, напасващи\n"
+"                            ШАБЛОНа_ЗА_ИМЕ\n"
 
-#: src/main.c:1470
+#: src/grep.c:1904
 #, c-format
 msgid ""
 "  -L, --files-without-match  print only names of FILEs containing no match\n"
@@ -615,8 +673,16 @@ msgid ""
 "  -T, --initial-tab         make tabs line up (if needed)\n"
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
+"  -L, --files-without-match извеждане само на имената на файлове без "
+"съвпадения\n"
+"  -l, --files-with-matches  извеждане само на имената на файлове със "
+"съвпадения\n"
+"  -c, --count               извеждане само на броя съвпадащи редове във "
+"файл\n"
+"  -T, --initial-tab         подравняване на табулациите при необходимост\n"
+"  -Z, --null                извеждане на знак NULL след всяко име на файл\n"
 
-#: src/main.c:1476
+#: src/grep.c:1910
 #, c-format
 msgid ""
 "\n"
@@ -625,255 +691,150 @@ msgid ""
 "  -A, --after-context=NUM   print NUM lines of trailing context\n"
 "  -C, --context=NUM         print NUM lines of output context\n"
 msgstr ""
+"\n"
+"Контрол върху контекста:\n"
+"  -B, --before-context=БРОЙ извеждане на този БРОЙ предхождащи редове\n"
+"  -A, --after-context=БРОЙ  извеждане на този БРОЙ следващи редове\n"
+"  -C, --context=БРОЙ        извеждане на този БРОЙ предхождащи и следващи\n"
+"                            редове\n"
 
-#: src/main.c:1483
-#, fuzzy, c-format
+#: src/grep.c:1917
+#, c-format
 msgid ""
 "  -NUM                      same as --context=NUM\n"
 "      --color[=WHEN],\n"
 "      --colour[=WHEN]       use markers to highlight the matching strings;\n"
-"                            WHEN is `always', `never', or `auto'\n"
-"  -U, --binary              do not strip CR characters at EOL (MSDOS)\n"
-"  -u, --unix-byte-offsets   report offsets as if CRs were not there (MSDOS)\n"
+"                            WHEN is 'always', 'never', or 'auto'\n"
+"  -U, --binary              do not strip CR characters at EOL (MSDOS/"
+"Windows)\n"
+"  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
+"                            (MSDOS/Windows)\n"
 "\n"
 msgstr ""
-"\n"
-"Контрол върху контекста:\n"
-"  -B, --before-context=N    извежда N реда от предхождащия контекст\n"
-"  -A, --after-context=N     извежда N реда от следващия контекст\n"
-"  -C, --context=N           извежда N реда от изходния контекст\n"
-"  -ЧИСЛО                    също като --context=N\n"
-"      --color, --colour     използва маркери за различаване на съвпадащите "
-"низове\n"
-"  -U, --binary              не филтрира CR символи в края на реда (MSDOS)\n"
-"  -u, --unix-byte-offsets   съобщава отместванията все едно, че символите "
-"CR\n"
-"                            липсват (MSDOS)\n"
-"\n"
-"`egrep' означава `grep -E'.  `fgrep' означава `grep -F'.\n"
-"Без да е зададен ФАЙЛ, или когато ФАЙЛ е - се чете стандартния вход.\n"
-"Ако са зададени по-малко от два ФАЙЛа се предполага -h.\n"
-"При изход grep връща 0 ако има съвпадение, 1 ако няма и 2 при грешка.\n"
+"  -БРОЙ                     същото като --context=БРОЙ\n"
+"      --color[=КОГА]\n"
+"      --colour[=КОГА]       оцветяване на съвпадащите низове. КОГА е "
+"„always“\n"
+"                            (винаги), „never“ (никога) или "
+"„auto“ (автоматично)\n"
+"  -U, --binary              знаците „CR“ в края на реда да се запазват\n"
+"                            (DOS/Windows)\n"
+"  -u, --unix-byte-offsets   отместванията се изчисляват сякаш знаците „CR“\n"
+"                            липсват (DOS/Windows)\n"
 
-#: src/main.c:1492
+#: src/grep.c:1926
 #, c-format
 msgid ""
-"With no FILE, or when FILE is -, read standard input.  If less than two "
-"FILEs\n"
-"are given, assume -h.  Exit status is 0 if any line was selected, 1 "
-"otherwise;\n"
-"if any error occurs and -q was not given, the exit status is 2.\n"
+"'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n"
+"Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"
 msgstr ""
+"„egrep“ е същото като „grep -E“, а „fgrep“ е същото като „grep -F“.\n"
+"Стартирането чрез „egrep“ и „fgrep“ е остаряло — ползвайте изрични опции.\n"
 
-#: src/main.c:1497
+#: src/grep.c:1929
 #, c-format
-msgid "GNU Grep home page: <%s>\n"
+msgid ""
+"When FILE is -, read standard input.  With no FILE, read . if a command-"
+"line\n"
+"-r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n"
+"Exit status is 0 if any line is selected, 1 otherwise;\n"
+"if any error occurs and -q is not given, the exit status is 2.\n"
 msgstr ""
+"Когато ФАЙЛът е „-“ се чете стандартният вход.  Без ФАЙЛ се чете текущата\n"
+"директория „.“.  Ако са зададени по-малко от два ФАЙЛа, се предполага „-h“.\n"
+"Изходният код на grep е 0 при поне едно съвпадение и 1 във всички останали\n"
+"случаи.  Ако не е зададена опцията „-q“ и възникне грешка, изходният код е "
+"2.\n"
 
-#: src/main.c:1529
-#, c-format
-msgid "%s can only use the %s pattern syntax"
-msgstr ""
-
-#: src/main.c:1532
+#: src/grep.c:1996
 #, c-format
 msgid "conflicting matchers specified"
 msgstr "зададените изрази за съвпадение са в конфликт"
 
-#: src/main.c:1546
-#, fuzzy, c-format
+#: src/grep.c:2007
+#, c-format
 msgid "invalid matcher %s"
-msgstr "невалиден максимален брой"
+msgstr "неправилен израз „%s“"
 
-#: src/main.c:1732
+#: src/grep.c:2290
 #, c-format
-msgid ""
-"in GREP_COLORS=\"%s\", the \"%s\" capacity needs a value (\"=...\"); skipped"
+msgid "warning: GREP_OPTIONS is deprecated; please use an alias or script"
 msgstr ""
+"предупреждение: променливата „GREP_OPTIONS“ е остаряла. Ползвайте синоним "
+"на\n"
+"обвивката или скрипт"
 
-#: src/main.c:1736
-#, c-format
-msgid ""
-"in GREP_COLORS=\"%s\", the \"%s\" capacity is boolean and cannot take a "
-"value (\"=%s\"); skipped"
-msgstr ""
-
-#: src/main.c:1745
-#, c-format
-msgid "in GREP_COLORS=\"%s\", the \"%s\" capacity %s"
-msgstr ""
-
-#: src/main.c:1768
-#, c-format
-msgid ""
-"stopped processing of ill-formed GREP_COLORS=\"%s\" at remaining substring "
-"\"%s\""
-msgstr ""
-
-#: src/main.c:1840
+#: src/grep.c:2320
 #, c-format
 msgid "unknown devices method"
 msgstr "неизвестен метод за обработка на специалните файлове"
 
-#: src/main.c:1974
+#: src/grep.c:2447
 #, c-format
 msgid "invalid max count"
-msgstr "невалиден максимален брой"
+msgstr "неправилен максимален брой"
 
-#: src/main.c:2029
+#: src/grep.c:2504
 #, c-format
 msgid "unknown binary-files type"
-msgstr "непознат тип двоичен файл"
+msgstr "непознат вид двоичен файл"
 
-#: src/pcresearch.c:42
+#: src/pcresearch.c:71
+#, c-format
+msgid "failed to allocate memory for the PCRE JIT stack"
+msgstr ""
+"неуспешно заделяне на памет за стека за изпълнение на шаблоните за „PCRE“"
+
+#: src/pcresearch.c:96
 msgid ""
 "support for the -P option is not compiled into this --disable-perl-regexp "
 "binary"
 msgstr ""
+"поддръжката на опцията „-P“ липсва в текущата команда, която е компилирана "
+"с\n"
+"опцията „--disable-perl-regexp“."
 
-#: src/pcresearch.c:56
-#, fuzzy, c-format
+#: src/pcresearch.c:119
+#, c-format
+msgid "-P supports only unibyte and UTF-8 locales"
+msgstr "опцията „-P“ изисква локалът да е с еднобайтово кодиране или UTF-8"
+
+#: src/pcresearch.c:126
+#, c-format
 msgid "the -P option only supports a single pattern"
-msgstr "Опция -P не се поддържа"
+msgstr "опцията „-P“ поддържа само един шаблон"
 
-#: src/pcresearch.c:110
+#: src/pcresearch.c:138
+#, c-format
+msgid "unescaped ^ or $ not supported with -Pz"
+msgstr ""
+
+#: src/pcresearch.c:184
+#, c-format
+msgid "internal error (should never happen)"
+msgstr "вътрешна грешка, която не трябва да възниква — молим да я докладвате"
+
+#: src/pcresearch.c:206
 #, c-format
 msgid "internal error"
-msgstr ""
+msgstr "вътрешна грешка, която не трябва да възниква — молим да я докладвате"
 
-#: src/pcresearch.c:154
+#: src/pcresearch.c:250
+#, c-format
+msgid "exceeded PCRE's line length limit"
+msgstr "максималният размер на реда за „PCRE“ е превишен"
+
+#: src/pcresearch.c:344
+#, c-format
+msgid "exhausted PCRE JIT stack"
+msgstr "паметта за стека за изпълнение на шаблоните за „PCRE“ свърши"
+
+#: src/pcresearch.c:348
 #, c-format
 msgid "exceeded PCRE's backtracking limit"
-msgstr ""
+msgstr "максималният брой връщания при рекурсия на „PCRE“ е превишен"
 
-#, fuzzy
-#~ msgid "%s: option '%s' is ambiguous\n"
-#~ msgstr "%s: опция `-W %s' не е еднозначна\n"
-
-#, fuzzy
-#~ msgid "warning: %s"
-#~ msgstr "предупреждение: %s: %s\n"
-
-#~ msgid "unknown directories method"
-#~ msgstr "неизвестен метод за обработка на директориите"
-
-#~ msgid "The -P and -z options cannot be combined"
-#~ msgstr "Опциите -P и -z не могат да бъдат комбинирани"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "Output control:\n"
-#~ "  -m, --max-count=NUM       stop after NUM matches\n"
-#~ "  -b, --byte-offset         print the byte offset with output lines\n"
-#~ "  -n, --line-number         print line number with output lines\n"
-#~ "      --line-buffered       flush output on every line\n"
-#~ "  -H, --with-filename       print the filename for each match\n"
-#~ "  -h, --no-filename         suppress the prefixing filename on output\n"
-#~ "      --label=LABEL         print LABEL as filename for standard input\n"
-#~ "  -o, --only-matching       show only the part of a line matching "
-#~ "PATTERN\n"
-#~ "  -q, --quiet, --silent     suppress all normal output\n"
-#~ "      --binary-files=TYPE   assume that binary files are TYPE;\n"
-#~ "                            TYPE is `binary', `text', or `without-match'\n"
-#~ "  -a, --text                equivalent to --binary-files=text\n"
-#~ "  -I                        equivalent to --binary-files=without-match\n"
-#~ "  -d, --directories=ACTION  how to handle directories;\n"
-#~ "                            ACTION is `read', `recurse', or `skip'\n"
-#~ "  -D, --devices=ACTION      how to handle devices, FIFOs and sockets;\n"
-#~ "                            ACTION is `read' or `skip'\n"
-#~ "  -R, -r, --recursive       equivalent to --directories=recurse\n"
-#~ "      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
-#~ "      --exclude=FILE_PATTERN  skip files and directories matching "
-#~ "FILE_PATTERN\n"
-#~ "      --exclude-from=FILE   skip files matching any file pattern from "
-#~ "FILE\n"
-#~ "      --exclude-dir=PATTERN  directories that match PATTERN will be "
-#~ "skipped.\n"
-#~ "  -L, --files-without-match  print only names of FILEs containing no "
-#~ "match\n"
-#~ "  -l, --files-with-matches  print only names of FILEs containing matches\n"
-#~ "  -c, --count               print only a count of matching lines per "
-#~ "FILE\n"
-#~ "  -T, --initial-tab         make tabs line up (if needed)\n"
-#~ "  -Z, --null                print 0 byte after FILE name\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Опции контролиращи форматирането на резултата:\n"
-#~ "  -m, --max-count=БРОЙ      спира след БРОЙ резултата\n"
-#~ "  -b, --byte-offset         извежда отместването в байтове за всеки ред\n"
-#~ "  -n, --line-number         извежда номера на реда за всеки ред\n"
-#~ "      --line-buffered       извежда резултата по цял ред наведнъж\n"
-#~ "  -H, --with-filename       извежда името на файла за всяко съвпадение\n"
-#~ "  -h, --no-filename         не извежда името на файла за всяко "
-#~ "съвпадение\n"
-#~ "      --label=ЕТИКЕТ        извежда ЕТИКЕТ като име на файл за "
-#~ "стандартния вход\n"
-#~ "  -o, --only-matching       извежда само частта от реда, която съвпада с "
-#~ "ТЕКСТ\n"
-#~ "  -q, --quiet, --silent     не извежда никакъв резултат при нормална "
-#~ "работа\n"
-#~ "      --binary-files=ТИП    задава типа на двоичните файлове\n"
-#~ "                            ТИП може да 'binary' (двоичен), "
-#~ "'text' (текстов),\n"
-#~ "                            или 'without-match' (без съвпадение).\n"
-#~ "  -a, --text                също като --binary-files=text\n"
-#~ "  -I                        също като --binary-files=without-match\n"
-#~ "  -d, --directories=МЕТОД   задава метод на действие при директориите\n"
-#~ "                            МЕТОД може да е \"read\" (прочети), \"recurse"
-#~ "\"\n"
-#~ "                            (претърси рекурсивно), или \"skip"
-#~ "\" (пропусни).\n"
-#~ "  -D, --devices=МЕТОД       как да се обработват специалните файлове,\n"
-#~ "                            FIFO и сокети. МЕТОД може да е \"read"
-#~ "\" (чети)\n"
-#~ "                            или \"skip\" (пропусни)\n"
-#~ "  -R, -r, --recursive       също като --directories=recurse.\n"
-#~ "      --include=ТЕКСТ       файлове съвпадащи с ТЕКСТ ще бъдат\n"
-#~ "                            използвани за съвпадане\n"
-#~ "      --exclude=ТЕКСТ       файлове съвпадащи с ТЕКСТ ще бъдат "
-#~ "пропуснати.\n"
-#~ "      --exclude-from=ФАЙЛ   файлове съвпадащи с ТЕКСТ във ФАЙЛ\n"
-#~ "                            ще бъдат пропуснати.\n"
-#~ "  -L, --files-without-match извежда само имена на файлове,\n"
-#~ "                            в които няма съвпадение\n"
-#~ "  -l, --files-with-matches  извежда само имена на файлове,\n"
-#~ "                            в които има съвпадение\n"
-#~ "  -c, --count               извежда само броя на съвпадащите редове\n"
-#~ "                            за всеки файл\n"
-#~ "  -Z, --null                извежда символ NULL след всяко име на файл\n"
-
-#~ msgid "%s: illegal option -- %c\n"
-#~ msgstr "%s: грешна опция -- %c\n"
-
-#~ msgid "out of memory"
-#~ msgstr "недостатъчна памет"
-
-#~ msgid "Usage: %s [OPTION]... PATTERN [FILE] ...\n"
-#~ msgstr "Употреба: %s [ОПЦИЯ]... ТЕКСТ [ФАЙЛ]...\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Report bugs to <bug-gnu-utils@gnu.org>.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "За програмни грешки съобщавайте на <bug-gnu-utils@gnu.org>.\n"
-
-#~ msgid "%s (GNU grep) %s\n"
-#~ msgstr "%s (GNU grep) %s\n"
-
-#~ msgid ""
-#~ "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-#~ msgstr ""
-#~ "Copyright 1988, 1992-1999, 2000, 2001 Free Software Foundation, Inc.\n"
-
-#~ msgid ""
-#~ "This is free software; see the source for copying conditions. There is "
-#~ "NO\n"
-#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR "
-#~ "PURPOSE.\n"
-#~ msgstr ""
-#~ "Това е свободно достъпен софтуер, вижте изходните файлове за условията "
-#~ "на\n"
-#~ "разпространение. Няма НИКАКВА гаранция, дори за ТЪРГОВСКА СТОЙНОСТ или\n"
-#~ "ПРИГОДИМОСТ ЗА ДАДЕНА ЦЕЛ.\n"
+#: src/pcresearch.c:355
+#, c-format
+msgid "internal PCRE error: %d"
+msgstr "вътрешна грешка на „PCRE“: %d"

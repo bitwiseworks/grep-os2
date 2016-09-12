@@ -1,7 +1,5 @@
-/* -*- buffer-read-only: t -*- vi: set ro: */
-/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Test of <sys/stat.h> substitute.
-   Copyright (C) 2007-2011 Free Software Foundation, Inc.
+   Copyright (C) 2007-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,6 +49,7 @@ int a[] =
     S_ISSOCK (S_IFREG),
     S_ISDOOR (S_IFREG),
     S_ISMPB (S_IFREG),
+    S_ISMPX (S_IFREG),
     S_ISNAM (S_IFREG),
     S_ISNWK (S_IFREG),
     S_ISPORT (S_IFREG),
@@ -190,6 +189,20 @@ verify (!S_ISMPB (S_IFLNK));
 #endif
 #ifdef S_IFSOCK
 verify (!S_ISMPB (S_IFSOCK));
+#endif
+
+#ifdef S_IFBLK
+verify (!S_ISMPX (S_IFBLK));
+#endif
+verify (!S_ISMPX (S_IFCHR));
+verify (!S_ISMPX (S_IFDIR));
+verify (!S_ISMPX (S_IFIFO));
+verify (!S_ISMPX (S_IFREG));
+#ifdef S_IFLNK
+verify (!S_ISMPX (S_IFLNK));
+#endif
+#ifdef S_IFSOCK
+verify (!S_ISMPX (S_IFSOCK));
 #endif
 
 #ifdef S_IFBLK
