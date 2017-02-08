@@ -1,5 +1,5 @@
 /* Determine name of the currently selected locale.
-   Copyright (C) 1995-2016 Free Software Foundation, Inc.
+   Copyright (C) 1995-2017 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
+
+#include "flexmember.h"
 
 #if HAVE_USELOCALE
 /* Mac OS X 10.5 defines the locale_t type in <xlocale.h>.  */
@@ -2619,7 +2621,7 @@ string_hash (const void *x)
 struct hash_node
   {
     struct hash_node * volatile next;
-    char contents[100]; /* has variable size */
+    char contents[FLEXIBLE_ARRAY_MEMBER];
   };
 
 # define HASH_TABLE_SIZE 257
@@ -2646,7 +2648,7 @@ struniq (const char *string)
   size = strlen (string) + 1;
   new_node =
     (struct hash_node *)
-    malloc (offsetof (struct hash_node, contents[0]) + size);
+    malloc (FLEXSIZEOF (struct hash_node, contents, size));
   if (new_node == NULL)
     /* Out of memory.  Return a statically allocated string.  */
     return "C";
@@ -2732,6 +2734,19 @@ gl_locale_name_thread_unsafe (int category, const char *categoryname)
 #  elif defined __sun && HAVE_GETLOCALENAME_L
         /* Solaris >= 12.  */
         return getlocalename_l (category, thread_locale);
+#  elif defined __CYGWIN__
+        /* Cygwin < 2.6 lacks uselocale and thread-local locales altogether.
+           Cygwin <= 2.6.1 lacks NL_LOCALE_NAME, requiring peeking inside
+           an opaque struct.  */
+#   ifdef NL_LOCALE_NAME
+        return nl_langinfo_l (NL_LOCALE_NAME (category), thread_locale);
+#   else
+        /* FIXME: Remove when we can assume new-enough Cygwin.  */
+        struct __locale_t {
+          char categories[7][32];
+        };
+        return ((struct __locale_t *) thread_locale)->categories[category];
+#   endif
 #  elif defined __ANDROID__
         return MB_CUR_MAX == 4 ? "C.UTF-8" : "C";
 #  endif

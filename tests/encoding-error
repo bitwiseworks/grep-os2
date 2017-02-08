@@ -1,7 +1,7 @@
 #! /bin/sh
 # Test grep's behavior on encoding errors.
 #
-# Copyright 2015-2016 Free Software Foundation, Inc.
+# Copyright 2015-2017 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -31,9 +31,12 @@ compare exp out || fail=1
 grep '^J' in >out || fail=1
 compare j out || fail=1
 
-grep '^X' in >out
-test $? = 1 || fail=1
+returns_ 1 grep '^X' in >out || fail=1
 compare /dev/null out || fail=1
+
+grep . in >out || fail=1
+(cat a j && printf 'Binary file in matches\n') >exp || framework_failure_
+compare exp out || fail=1
 
 grep -a . in >out || fail=1
 compare in out

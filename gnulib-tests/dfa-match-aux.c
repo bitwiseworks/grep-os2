@@ -1,6 +1,6 @@
 /* Auxiliary program to test a DFA code path that cannot be triggered
    by grep or gawk.
-   Copyright 2014-2016 Free Software Foundation, Inc.
+   Copyright 2014-2017 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,8 +24,9 @@
 #include <string.h>
 #include <regex.h>
 #include <dfa.h>
+#include <localeinfo.h>
 
-#include "progname.h"
+#include "getprogname.h"
 
 _Noreturn void
 dfaerror (char const *mesg)
@@ -47,15 +48,16 @@ main (int argc, char **argv)
   struct dfa *dfa;
   char *beg, *end, *p;
   int allow_nl;
+  struct localeinfo localeinfo;
 
-  set_program_name (argv[0]);
   if (argc < 3)
     exit (EXIT_FAILURE);
 
   setlocale (LC_ALL, "");
+  init_localeinfo (&localeinfo);
 
-  dfasyntax (RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES, 0, '\n');
   dfa = dfaalloc ();
+  dfasyntax (dfa, &localeinfo, RE_SYNTAX_GREP | RE_NO_EMPTY_RANGES, 0);
   dfacomp (argv[1], strlen (argv[1]), dfa, 0);
 
   beg = argv[2];

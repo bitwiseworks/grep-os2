@@ -1,5 +1,5 @@
 # Customize maint.mk                           -*- makefile -*-
-# Copyright (C) 2009-2016 Free Software Foundation, Inc.
+# Copyright (C) 2009-2017 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,6 +13,11 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Cause the tool(s) built by this package to be used also when running
+# commands via e.g., "make syntax-check".  Doing this a little sooner
+# would have avoided a grep infloop bug.
+export PATH := $(srcdir)/src:${PATH}
 
 # Used in maint.mk's web-manual rule
 manual_title = GNU Grep: Print lines matching a pattern
@@ -30,7 +35,7 @@ bootstrap-tools = autoconf,automake,gnulib
 
 # The tight_scope test gets confused about inline functions.
 # like 'to_uchar'.
-_gl_TS_unmarked_extern_functions = main usage mb_clen to_uchar
+_gl_TS_unmarked_extern_functions = main usage mb_clen to_uchar dfaerror dfawarn
 
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
@@ -55,7 +60,7 @@ export VERBOSE = yes
 # 1127556 9e
 export XZ_OPT = -6e
 
-old_NEWS_hash = 7225c806189eaa7ffd4c744e3248d0a5
+old_NEWS_hash = d4a1c9c6c0b35de3b2c86b8f7d35b43e
 
 # Many m4 macros names once began with 'jm_'.
 # Make sure that none are inadvertently reintroduced.
@@ -138,16 +143,12 @@ update-copyright-env = \
 include $(abs_top_srcdir)/dist-check.mk
 
 exclude_file_name_regexp--sc_bindtextdomain = \
-  ^tests/(get-mb-cur-max|dfa-match-aux)\.c$$
-exclude_file_name_regexp--sc_prohibit_atoi_atof = \
-  ^tests/dfa-match-aux\.c$$
+  ^tests/get-mb-cur-max\.c$$
 
 exclude_file_name_regexp--sc_prohibit_strcmp = /colorize-.*\.c$$
 exclude_file_name_regexp--sc_prohibit_xalloc_without_use = ^src/kwset\.c$$
 exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
   (Makefile|\.(am|mk)$$)
-exclude_file_name_regexp--sc_error_message_uppercase = ^src/dfa\.c$$
-exclude_file_name_regexp--sc_prohibit_strncpy = ^src/dfa\.c$$
 
 exclude_file_name_regexp--sc_prohibit_doubled_word = ^tests/count-newline$$
 

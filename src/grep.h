@@ -1,5 +1,5 @@
 /* grep.h - interface to grep driver for searching subroutines.
-   Copyright (C) 1992, 1998, 2001, 2007, 2009-2016 Free Software Foundation,
+   Copyright (C) 1992, 1998, 2001, 2007, 2009-2017 Free Software Foundation,
    Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,6 @@ extern bool match_words;	/* -w */
 extern bool match_lines;	/* -x */
 extern char eolbyte;		/* -z */
 
-extern bool buf_has_encoding_errors (char *, size_t);
+extern char const *pattern_file_name (size_t, size_t *);
 
 #endif

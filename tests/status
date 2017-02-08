@@ -5,7 +5,7 @@
 #  1 no match
 #  2 file not found
 #
-# Copyright (C) 2001, 2006, 2009-2016 Free Software Foundation, Inc.
+# Copyright (C) 2001, 2006, 2009-2017 Free Software Foundation, Inc.
 #
 # Copying and distribution of this file, with or without modification,
 # are permitted in any medium without royalty provided the copyright
@@ -47,9 +47,10 @@ else
                 fail=1
         fi
 
-        # should return 2 file not found
+        # should return 0 (found a match) or 2 (file not found)
         echo "abcd" | grep -E -s 'abc' - MMMMMMMM.MMM > /dev/null 2>&1
-        if test $? -ne 2 ; then
+        status=$?
+        if test $status -ne 0 && test $status -ne 2 ; then
                 echo "Status: Wrong status code, test \#5 failed"
                 fail=1
         fi

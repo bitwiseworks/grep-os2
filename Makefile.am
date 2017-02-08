@@ -1,6 +1,6 @@
 # Process this file with automake to create Makefile.in
 #
-# Copyright 1997-1998, 2005-2016 Free Software Foundation, Inc.
+# Copyright 1997-1998, 2005-2017 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ check-very-expensive: check-expensive
 
 # Run syntax-check rules before creating a distribution tarball.
 .PHONY: run-syntax-check
-run-syntax-check:
+run-syntax-check: all
 	$(AM_V_GEN)test ! -d .git || $(MAKE) syntax-check
 
 # Arrange so that .tarball-version appears only in the distribution

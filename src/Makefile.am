@@ -1,5 +1,5 @@
 ## Process this file with automake to create Makefile.in
-# Copyright 1997-1998, 2005-2016 Free Software Foundation, Inc.
+# Copyright 1997-1998, 2005-2017 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,11 +23,16 @@ AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 
 bin_PROGRAMS = grep
 bin_SCRIPTS = egrep fgrep
-grep_SOURCES = grep.c searchutils.c \
-          dfa.c dfasearch.c \
-          kwset.c kwsearch.c \
-          pcresearch.c
-noinst_HEADERS = grep.h dfa.h kwset.h search.h system.h
+grep_SOURCES =					\
+  dfasearch.c					\
+  die.h						\
+  grep.c					\
+  kwsearch.c					\
+  kwset.c					\
+  pcresearch.c					\
+  searchutils.c
+
+noinst_HEADERS = grep.h kwset.h search.h system.h
 
 # Sometimes, the expansion of $(LIBINTL) includes -lc which may
 # include modules defining variables like 'optind', so libgreputils.a
