@@ -129,6 +129,9 @@ writer_func (void *ignored)
 int
 main ()
 {
+#ifdef __OS2__
+  FAILURE()
+#endif
   reader1 = pthread_self ();
 
   /* Step 1: The main thread initializes the lock and the baton.  */
