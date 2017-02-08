@@ -50,7 +50,9 @@ struct pcre_comp
      string matches when that flag is used.  */
   int empty_match[2];
 
+# if PCRE_STUDY_JIT_COMPILE
   pcre_jit_stack *jit_stack;
+# endif
 };
 
 
