@@ -1,5 +1,5 @@
 /* Auxiliary program to detect support for a locale.
-   Copyright 2010-2016 Free Software Foundation, Inc.
+   Copyright 2010-2017 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,12 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "progname.h"
+#include "getprogname.h"
 
 int
 main (int argc, char **argv)
 {
-  set_program_name (argv[0]);
   if (1 < argc && setlocale (LC_ALL, argv[1]))
     {
       printf ("%d\n", (int) MB_CUR_MAX);

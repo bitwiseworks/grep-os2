@@ -1,5 +1,5 @@
 /* pcresearch.c - searching subroutines using PCRE for grep.
-   Copyright 2000, 2007, 2009-2016 Free Software Foundation, Inc.
+   Copyright 2000, 2007, 2009-2017 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include "search.h"
+#include "die.h"
 
 #if HAVE_LIBPCRE
 # include <pcre.h>
@@ -28,48 +29,57 @@
    in pcre_exec.  */
 enum { NSUB = 300 };
 
-/* Compiled internal form of a Perl regular expression.  */
-static pcre *cre;
-
-/* Additional information about the pattern.  */
-static pcre_extra *extra;
-
 # ifndef PCRE_STUDY_JIT_COMPILE
 #  define PCRE_STUDY_JIT_COMPILE 0
 # endif
 
+struct pcre_comp
+{
+  /* Compiled internal form of a Perl regular expression.  */
+  pcre *cre;
+
+  /* Additional information about the pattern.  */
+  pcre_extra *extra;
+
 # if PCRE_STUDY_JIT_COMPILE
-/* Maximum size of the JIT stack.  */
-static int jit_stack_size;
+  /* Maximum size of the JIT stack.  */
+  int jit_stack_size;
 # endif
+
+  /* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
+     string matches when that flag is used.  */
+  int empty_match[2];
+
+  pcre_jit_stack *jit_stack;
+};
+
 
 /* Match the already-compiled PCRE pattern against the data in SUBJECT,
    of size SEARCH_BYTES and starting with offset SEARCH_OFFSET, with
    options OPTIONS, and storing resulting matches into SUB.  Return
    the (nonnegative) match location or a (negative) error number.  */
 static int
-jit_exec (char const *subject, int search_bytes, int search_offset,
-          int options, int *sub)
+jit_exec (struct pcre_comp *pc, char const *subject, int search_bytes,
+          int search_offset, int options, int *sub)
 {
   while (true)
     {
-      int e = pcre_exec (cre, extra, subject, search_bytes, search_offset,
-                         options, sub, NSUB);
+      int e = pcre_exec (pc->cre, pc->extra, subject, search_bytes,
+                         search_offset, options, sub, NSUB);
 
 # if PCRE_STUDY_JIT_COMPILE
       if (e == PCRE_ERROR_JIT_STACKLIMIT
-          && 0 < jit_stack_size && jit_stack_size <= INT_MAX / 2)
+          && 0 < pc->jit_stack_size && pc->jit_stack_size <= INT_MAX / 2)
         {
-          int old_size = jit_stack_size;
-          int new_size = jit_stack_size = old_size * 2;
-          static pcre_jit_stack *jit_stack;
-          if (jit_stack)
-            pcre_jit_stack_free (jit_stack);
-          jit_stack = pcre_jit_stack_alloc (old_size, new_size);
-          if (!jit_stack)
-            error (EXIT_TROUBLE, 0,
-                   _("failed to allocate memory for the PCRE JIT stack"));
-          pcre_assign_jit_stack (extra, NULL, jit_stack);
+          int old_size = pc->jit_stack_size;
+          int new_size = pc->jit_stack_size = old_size * 2;
+          if (pc->jit_stack)
+            pcre_jit_stack_free (pc->jit_stack);
+          pc->jit_stack = pcre_jit_stack_alloc (old_size, new_size);
+          if (!pc->jit_stack)
+            die (EXIT_TROUBLE, 0,
+                 _("failed to allocate memory for the PCRE JIT stack"));
+          pcre_assign_jit_stack (pc->extra, NULL, pc->jit_stack);
           continue;
         }
 # endif
@@ -80,21 +90,13 @@ jit_exec (char const *subject, int search_bytes, int search_offset,
 
 #endif
 
-#if HAVE_LIBPCRE
-/* Table, indexed by ! (flag & PCRE_NOTBOL), of whether the empty
-   string matches when that flag is used.  */
-static int empty_match[2];
-
-static bool multibyte_locale;
-#endif
-
-void
-Pcompile (char const *pattern, size_t size)
+void *
+Pcompile (char *pattern, size_t size, reg_syntax_t ignored)
 {
 #if !HAVE_LIBPCRE
-  error (EXIT_TROUBLE, 0, "%s",
-         _("support for the -P option is not compiled into "
-           "this --disable-perl-regexp binary"));
+  die (EXIT_TROUBLE, 0,
+       _("support for the -P option is not compiled into "
+         "this --disable-perl-regexp binary"));
 #else
   int e;
   char const *ep;
@@ -105,41 +107,23 @@ Pcompile (char const *pattern, size_t size)
   int fix_len_max = MAX (sizeof wprefix - 1 + sizeof wsuffix - 1,
                          sizeof xprefix - 1 + sizeof xsuffix - 1);
   char *re = xnmalloc (4, size + (fix_len_max + 4 - 1) / 4);
-  int flags = (PCRE_MULTILINE
-               | (match_icase ? PCRE_CASELESS : 0));
+  int flags = PCRE_DOLLAR_ENDONLY | (match_icase ? PCRE_CASELESS : 0);
   char const *patlim = pattern + size;
   char *n = re;
   char const *p;
   char const *pnul;
+  struct pcre_comp *pc = xcalloc (1, sizeof (*pc));
 
-  if (1 < MB_CUR_MAX)
+  if (localeinfo.multibyte)
     {
-      if (! using_utf8 ())
-        error (EXIT_TROUBLE, 0,
-               _("-P supports only unibyte and UTF-8 locales"));
-      multibyte_locale = true;
+      if (! localeinfo.using_utf8)
+        die (EXIT_TROUBLE, 0, _("-P supports only unibyte and UTF-8 locales"));
       flags |= PCRE_UTF8;
     }
 
-  /* FIXME: Remove these restrictions.  */
+  /* FIXME: Remove this restriction.  */
   if (memchr (pattern, '\n', size))
-    error (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
-  if (! eolbyte)
-    {
-      bool escaped = false;
-      bool after_unescaped_left_bracket = false;
-      for (p = pattern; *p; p++)
-        if (escaped)
-          escaped = after_unescaped_left_bracket = false;
-        else
-          {
-            if (*p == '$' || (*p == '^' && !after_unescaped_left_bracket))
-              error (EXIT_TROUBLE, 0,
-                     _("unescaped ^ or $ not supported with -Pz"));
-            escaped = *p == '\\';
-            after_unescaped_left_bracket = *p == '[';
-          }
-    }
+    die (EXIT_TROUBLE, 0, _("the -P option only supports a single pattern"));
 
   *n = '\0';
   if (match_words)
@@ -171,40 +155,42 @@ Pcompile (char const *pattern, size_t size)
   if (match_lines)
     strcpy (n, xsuffix);
 
-  cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
-  if (!cre)
-    error (EXIT_TROUBLE, 0, "%s", ep);
+  pc->cre = pcre_compile (re, flags, &ep, &e, pcre_maketables ());
+  if (!pc->cre)
+    die (EXIT_TROUBLE, 0, "%s", ep);
 
-  extra = pcre_study (cre, PCRE_STUDY_JIT_COMPILE, &ep);
+  pc->extra = pcre_study (pc->cre, PCRE_STUDY_JIT_COMPILE, &ep);
   if (ep)
-    error (EXIT_TROUBLE, 0, "%s", ep);
+    die (EXIT_TROUBLE, 0, "%s", ep);
 
 # if PCRE_STUDY_JIT_COMPILE
-  if (pcre_fullinfo (cre, extra, PCRE_INFO_JIT, &e))
-    error (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
+  if (pcre_fullinfo (pc->cre, pc->extra, PCRE_INFO_JIT, &e))
+    die (EXIT_TROUBLE, 0, _("internal error (should never happen)"));
 
   /* The PCRE documentation says that a 32 KiB stack is the default.  */
   if (e)
-    jit_stack_size = 32 << 10;
+    pc->jit_stack_size = 32 << 10;
 # endif
 
   free (re);
 
   int sub[NSUB];
-  empty_match[false] = pcre_exec (cre, extra, "", 0, 0,
-                                  PCRE_NOTBOL, sub, NSUB);
-  empty_match[true] = pcre_exec (cre, extra, "", 0, 0, 0, sub, NSUB);
+  pc->empty_match[false] = pcre_exec (pc->cre, pc->extra, "", 0, 0,
+                                      PCRE_NOTBOL, sub, NSUB);
+  pc->empty_match[true] = pcre_exec (pc->cre, pc->extra, "", 0, 0, 0, sub,
+                                     NSUB);
+
+  return pc;
 #endif /* HAVE_LIBPCRE */
 }
 
 size_t
-Pexecute (char *buf, size_t size, size_t *match_size,
+Pexecute (void *vcp, char const *buf, size_t size, size_t *match_size,
           char const *start_ptr)
 {
 #if !HAVE_LIBPCRE
   /* We can't get here, because Pcompile would have been called earlier.  */
-  error (EXIT_TROUBLE, 0, _("internal error"));
-  return -1;
+  die (EXIT_TROUBLE, 0, _("internal error"));
 #else
   int sub[NSUB];
   char const *p = start_ptr ? start_ptr : buf;
@@ -212,49 +198,29 @@ Pexecute (char *buf, size_t size, size_t *match_size,
   char const *line_start = buf;
   int e = PCRE_ERROR_NOMATCH;
   char const *line_end;
+  struct pcre_comp *pc = vcp;
 
   /* The search address to pass to pcre_exec.  This is the start of
      the buffer, or just past the most-recently discovered encoding
-     error.  */
+     error or line end.  */
   char const *subject = buf;
 
-  /* If the input is unibyte or is free of encoding errors a multiline search is
-     typically more efficient.  Otherwise, a single-line search is
-     typically faster, so that pcre_exec doesn't waste time validating
-     the entire input buffer.  */
-  bool multiline = true;
-  if (multibyte_locale)
+  do
     {
-      multiline = ! buf_has_encoding_errors (buf, size - 1);
-      buf[size - 1] = eolbyte;
-    }
-
-  for (; p < buf + size; p = line_start = line_end + 1)
-    {
-      bool too_big;
-
-      if (multiline)
-        {
-          size_t pcre_size_max = MIN (INT_MAX, SIZE_MAX - 1);
-          size_t scan_size = MIN (pcre_size_max + 1, buf + size - p);
-          line_end = memrchr (p, eolbyte, scan_size);
-          too_big = ! line_end;
-        }
-      else
-        {
-          line_end = memchr (p, eolbyte, buf + size - p);
-          too_big = INT_MAX < line_end - p;
-        }
-
-      if (too_big)
-        error (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
+      /* Search line by line.  Although this code formerly used
+         PCRE_MULTILINE for performance, the performance wasn't always
+         better and the correctness issues were too puzzling.  See
+         Bug#22655.  */
+      line_end = memchr (p, eolbyte, buf + size - p);
+      if (INT_MAX < line_end - p)
+        die (EXIT_TROUBLE, 0, _("exceeded PCRE's line length limit"));
 
       for (;;)
         {
           /* Skip past bytes that are easily determined to be encoding
              errors, treating them as data that cannot match.  This is
              faster than having pcre_exec check them.  */
-          while (mbclen_cache[to_uchar (*p)] == (size_t) -1)
+          while (localeinfo.sbclen[to_uchar (*p)] == -1)
             {
               p++;
               subject = p;
@@ -268,34 +234,18 @@ Pexecute (char *buf, size_t size, size_t *match_size,
           if (p == line_end)
             {
               sub[0] = sub[1] = search_offset;
-              e = empty_match[bol];
+              e = pc->empty_match[bol];
               break;
             }
 
           int options = 0;
           if (!bol)
             options |= PCRE_NOTBOL;
-          if (multiline)
-            options |= PCRE_NO_UTF8_CHECK;
 
-          e = jit_exec (subject, line_end - subject, search_offset,
+          e = jit_exec (pc, subject, line_end - subject, search_offset,
                         options, sub);
           if (e != PCRE_ERROR_BADUTF8)
-            {
-              if (0 < e && multiline && sub[1] - sub[0] != 0)
-                {
-                  char const *nl = memchr (subject + sub[0], eolbyte,
-                                           sub[1] - sub[0]);
-                  if (nl)
-                    {
-                      /* This match crosses a line boundary; reject it.  */
-                      p = subject + sub[0];
-                      line_end = nl;
-                      continue;
-                    }
-                }
-              break;
-            }
+            break;
           int valid_bytes = sub[0];
 
           if (search_offset <= valid_bytes)
@@ -307,10 +257,10 @@ Pexecute (char *buf, size_t size, size_t *match_size,
                      This optimization is valid if VALID_BYTES is zero,
                      which means SEARCH_OFFSET is also zero.  */
                   sub[1] = 0;
-                  e = empty_match[bol];
+                  e = pc->empty_match[bol];
                 }
               else
-                e = jit_exec (subject, valid_bytes, search_offset,
+                e = jit_exec (pc, subject, valid_bytes, search_offset,
                               options | PCRE_NO_UTF8_CHECK | PCRE_NOTEOL, sub);
 
               if (e != PCRE_ERROR_NOMATCH)
@@ -327,7 +277,9 @@ Pexecute (char *buf, size_t size, size_t *match_size,
       if (e != PCRE_ERROR_NOMATCH)
         break;
       bol = true;
+      p = subject = line_start = line_end + 1;
     }
+  while (p < buf + size);
 
   if (e <= 0)
     {
@@ -337,22 +289,22 @@ Pexecute (char *buf, size_t size, size_t *match_size,
           break;
 
         case PCRE_ERROR_NOMEMORY:
-          error (EXIT_TROUBLE, 0, _("memory exhausted"));
+          die (EXIT_TROUBLE, 0, _("memory exhausted"));
 
 # if PCRE_STUDY_JIT_COMPILE
         case PCRE_ERROR_JIT_STACKLIMIT:
-          error (EXIT_TROUBLE, 0, _("exhausted PCRE JIT stack"));
+          die (EXIT_TROUBLE, 0, _("exhausted PCRE JIT stack"));
 # endif
 
         case PCRE_ERROR_MATCHLIMIT:
-          error (EXIT_TROUBLE, 0, _("exceeded PCRE's backtracking limit"));
+          die (EXIT_TROUBLE, 0, _("exceeded PCRE's backtracking limit"));
 
         default:
           /* For now, we lump all remaining PCRE failures into this basket.
              If anyone cares to provide sample grep usage that can trigger
              particular PCRE errors, we can add to the list (above) of more
              detailed diagnostics.  */
-          error (EXIT_TROUBLE, 0, _("internal PCRE error: %d"), e);
+          die (EXIT_TROUBLE, 0, _("internal PCRE error: %d"), e);
         }
 
       return -1;
@@ -367,15 +319,6 @@ Pexecute (char *buf, size_t size, size_t *match_size,
         {
           beg = matchbeg;
           end = matchend;
-        }
-      else if (multiline)
-        {
-          char const *prev_nl = memrchr (line_start - 1, eolbyte,
-                                         matchbeg - (line_start - 1));
-          char const *next_nl = memchr (matchend, eolbyte,
-                                        line_end + 1 - matchend);
-          beg = prev_nl + 1;
-          end = next_nl + 1;
         }
       else
         {

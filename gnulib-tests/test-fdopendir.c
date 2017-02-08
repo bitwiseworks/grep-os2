@@ -1,5 +1,5 @@
 /* Test opening a directory stream from a file descriptor.
-   Copyright (C) 2009-2016 Free Software Foundation, Inc.
+   Copyright (C) 2009-2017 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ SIGNATURE_CHECK (fdopendir, DIR *, (int));
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "progname.h"
 #include "macros.h"
 
 int
@@ -35,8 +34,6 @@ main (int argc _GL_UNUSED, char *argv[])
 {
   DIR *d;
   int fd;
-
-  set_program_name (argv[0]);
 
   /* A non-directory cannot be turned into a directory stream.  */
   fd = open ("test-fdopendir.tmp", O_RDONLY | O_CREAT, 0600);

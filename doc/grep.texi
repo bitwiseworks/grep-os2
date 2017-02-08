@@ -18,7 +18,7 @@
 @copying
 This manual is for @command{grep}, a pattern matching engine.
 
-Copyright @copyright{} 1999-2002, 2005, 2008-2016 Free Software Foundation,
+Copyright @copyright{} 1999-2002, 2005, 2008-2017 Free Software Foundation,
 Inc.
 
 @quotation
@@ -338,6 +338,7 @@ do
 done
 @end example
 
+@cindex context lines
 When @command{grep} stops after @var{num} matching lines,
 it outputs any trailing context lines.
 Since context does not include matching lines,
@@ -354,6 +355,9 @@ When the @option{-v} or @option{--invert-match} option is also used,
 @cindex only matching
 Print only the matched (non-empty) parts of matching lines,
 with each such part on a separate output line.
+Output lines use the same delimiters as input, and delimiters are null
+bytes if @option{-z} (@option{--null-data}) is also used (@pxref{Other
+Options}).
 
 @item -q
 @itemx --quiet
@@ -459,10 +463,8 @@ Make sure that the first character of actual line content lies on a tab stop,
 so that the alignment of tabs looks normal.
 This is useful with options that prefix their output to the actual content:
 @option{-H}, @option{-n}, and @option{-b}.
-In order to improve the probability that lines
-from a single file will all start at the same column,
-this also causes the line number and byte offset (if present)
-to be printed in a minimum-size field width.
+This may also prepend spaces to output line numbers and byte offsets
+so that lines from a single file all start at the same column.
 
 @item -u
 @itemx --unix-byte-offsets
@@ -501,8 +503,11 @@ even those that contain newline characters.
 @node Context Line Control
 @subsection Context Line Control
 
+@cindex context lines
+@dfn{Context lines} are non-matching lines that are near a matching line.
+They are output only if one of the following options are used.
 Regardless of how these options are set,
-@command{grep} will never print any given line more than once.
+@command{grep} never outputs any given line more than once.
 If the @option{-o} (@option{--only-matching}) option is specified,
 these options have no effect and a warning is given upon their use.
 
@@ -530,7 +535,7 @@ Print @var{num} lines of leading context before matching lines.
 @opindex -C
 @opindex --context
 @opindex -@var{num}
-@cindex context
+@cindex context lines
 Print @var{num} lines of leading and trailing output context.
 
 @item --group-separator=@var{string}
@@ -606,18 +611,19 @@ Variables}), or null input bytes when the
 @option{-z} (@option{--null-data}) option is not given (@pxref{Other
 Options}).
 
-By default, @var{type} is @samp{binary}, and when @command{grep}
-discovers that a file is binary it suppresses any further output, and
-instead outputs either a one-line message saying that a binary file
-matches, or no message if there is no match.
+By default, @var{type} is @samp{binary}, and @command{grep}
+suppresses output afer null input binary data is discovered,
+and suppresses output lines that contain improperly encoded data.
+When some output is suppressed, @command{grep} follows any output
+with a one-line message saying that a binary file matches.
 
 If @var{type} is @samp{without-match},
-when @command{grep} discovers that a file is binary
+when @command{grep} discovers null input binary data
 it assumes that the rest of the file does not match;
 this is equivalent to the @option{-I} option.
 
 If @var{type} is @samp{text},
-@command{grep} processes a binary file as if it were text;
+@command{grep} processes binary data as if it were text;
 this is equivalent to the @option{-a} option.
 
 When @var{type} is @samp{binary}, @command{grep} may treat non-text
@@ -1120,8 +1126,10 @@ expressions), separated by newlines, any of which is to be matched.
 @opindex --perl-regexp
 @cindex matching Perl-compatible regular expressions
 Interpret the pattern as a Perl-compatible regular expression (PCRE).
-This is highly experimental and
+This is highly experimental, particularly when combined with
+the @option{-z} (@option{--null-data}) option, and
 @samp{grep@ -P} may warn of unimplemented features.
+@xref{Other Options}.
 
 @end table
 
@@ -1761,7 +1769,7 @@ Therefore, merely using the @code{[:space:]} character class does not
 match newlines in the way you might expect.
 
 With the GNU @command{grep} option @option{-z} (@option{--null-data}), each
-input ``line'' is terminated by a null byte; @pxref{Other Options}.  Thus,
+input and output ``line'' is null-terminated; @pxref{Other Options}.  Thus,
 you can match newlines in the input, but typically if there is a match
 the entire input is output, so this usage is often combined with
 output-suppressing options like @option{-q}, e.g.:
