@@ -12,6 +12,7 @@ build-aux/missing
 build-aux/test-driver
 build-aux/texinfo.tex
 config.hin
+config.hin~
 configure
 Makefile.in
 m4/glibc2.m4
