@@ -76,6 +76,9 @@ _GL_INLINE_HEADER_BEGIN
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
+#if defined __OS2__ && @HAVE_SA_FAMILY_T@
+#include <sys/un.h>
+#endif
 
 #if !@HAVE_SA_FAMILY_T@
 # if !GNULIB_defined_sa_family_t

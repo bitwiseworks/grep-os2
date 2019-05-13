@@ -61,6 +61,9 @@ AC_DEFUN([gl_HEADER_SYS_SOCKET],
 #ifdef HAVE_WS2TCPIP_H
 #include <ws2tcpip.h>
 #endif
+#ifdef __OS2__
+#include <sys/un.h>
+#endif
 ])
   if test $ac_cv_type_struct_sockaddr_storage = no; then
     HAVE_STRUCT_SOCKADDR_STORAGE=0

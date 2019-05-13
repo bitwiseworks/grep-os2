@@ -59,6 +59,9 @@ AC_DEFUN([gl_SOCKET_HEADERS],
 #elif HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
 #endif
+#ifdef __OS2__
+# include <libcx/net.h>
+#endif
 ])
 
 dnl Tests for the existence of the header for socket facilities.
