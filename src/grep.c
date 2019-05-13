@@ -1,5 +1,5 @@
 /* grep.c - main driver file for grep.
-   Copyright (C) 1992, 1997-2002, 2004-2017 Free Software Foundation, Inc.
+   Copyright (C) 1992, 1997-2002, 2004-2018 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 
 #include "argmatch.h"
 #include "c-ctype.h"
+#include "c-stack.h"
 #include "closeout.h"
 #include "colorize.h"
 #include "die.h"
@@ -48,15 +49,12 @@
 #include "search.h"
 #include "version-etc.h"
 #include "xalloc.h"
+#include "xbinary-io.h"
 #include "xstrtol.h"
 
 enum { SEP_CHAR_SELECTED = ':' };
 enum { SEP_CHAR_REJECTED = '-' };
 static char const SEP_STR_GROUP[] = "--";
-
-#define AUTHORS \
-  proper_name ("Mike Haertel"), \
-  _("others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>")
 
 /* When stdout is connected to a regular file, save its stat
    information here, so that we can automatically skip it, thus
@@ -536,10 +534,6 @@ static enum
 static bool grepfile (int, char const *, bool, bool);
 static bool grepdesc (int, bool);
 
-static void dos_binary (void);
-static void dos_unix_byte_offsets (void);
-static size_t undossify_input (char *, size_t);
-
 static bool
 is_device_mode (mode_t m)
 {
@@ -762,7 +756,7 @@ context_length_arg (char const *str, intmax_t *out)
     case LONGINT_OVERFLOW:
       if (0 <= *out)
         break;
-      /* Fall through.  */
+      FALLTHROUGH;
     default:
       die (EXIT_TROUBLE, 0, "%s: %s", str,
            _("invalid context length argument"));
@@ -801,7 +795,6 @@ skipped_file (char const *name, bool command_line, bool is_dir)
 
 static char *buffer;		/* Base of buffer. */
 static size_t bufalloc;		/* Allocated buffer size, counting slop. */
-enum { INITIAL_BUFSIZE = 32768 }; /* Initial buffer size, not counting slop. */
 static int bufdesc;		/* File descriptor. */
 static char *bufbeg;		/* Beginning of user-visible stuff. */
 static char *buflim;		/* Limit of user-visible stuff. */
@@ -813,6 +806,9 @@ static off_t after_last_match;	/* Pointer after last matching line that
 static bool skip_nuls;		/* Skip '\0' in data.  */
 static bool skip_empty_lines;	/* Skip empty lines in data.  */
 static uintmax_t totalnl;	/* Total newline count before lastnl. */
+
+/* Initial buffer size, not counting slop. */
+enum { INITIAL_BUFSIZE = 96 * 1024 };
 
 /* Return VAL aligned to the next multiple of ALIGNMENT.  VAL can be
    an integer or a pointer.  Both args must be free of side effects.  */
@@ -973,7 +969,6 @@ fillbuf (size_t save, struct stat const *st)
         }
     }
 
-  fillsize = undossify_input (readbuf, fillsize);
   buflim = readbuf + fillsize;
 
   /* Initialize the following word, because skip_easy_bytes and some
@@ -1015,7 +1010,7 @@ static intmax_t out_before;	/* Lines of leading context. */
 static intmax_t out_after;	/* Lines of trailing context. */
 static bool count_matches;	/* Count matching lines.  */
 static bool no_filenames;	/* Suppress file names.  */
-static intmax_t max_count;	/* Stop after outputting this many
+static intmax_t max_count;	/* Max number of selected
                                    lines from an input file.  */
 static bool line_buffered;	/* Use line buffering.  */
 static char *label = NULL;      /* Fake filename for stdin */
@@ -1027,14 +1022,13 @@ static char const *lastnl;	/* Pointer after last newline counted. */
 static char *lastout;		/* Pointer after last character output;
                                    NULL if no character has been output
                                    or if it's conceptually before bufbeg. */
-static intmax_t outleft;	/* Maximum number of lines to be output.  */
+static intmax_t outleft;	/* Maximum number of selected lines.  */
 static intmax_t pending;	/* Pending lines of output.
                                    Always kept 0 if out_quiet is true.  */
 static bool done_on_match;	/* Stop scanning file on first match.  */
 static bool exit_on_match;	/* Exit on first match.  */
 static bool dev_null_output;	/* Stdout is known to be /dev/null.  */
-
-#include "dosbuf.c"
+static bool binary;		/* Use binary rather than text I/O.  */
 
 static void
 nlscan (char const *lim)
@@ -1127,7 +1121,6 @@ print_line_head (char *beg, size_t len, char const *lim, char sep)
   if (out_byte)
     {
       uintmax_t pos = add_count (totalcc, beg - bufbeg);
-      pos = dossified_pos (pos);
       print_offset (pos, byte_num_color);
       print_sep (sep);
     }
@@ -1282,25 +1275,16 @@ prline (char *beg, char *lim, char sep)
   lastout = lim;
 }
 
-/* Print pending lines of trailing context prior to LIM. Trailing context ends
-   at the next matching line when OUTLEFT is 0.  */
+/* Print pending lines of trailing context prior to LIM.  */
 static void
 prpending (char const *lim)
 {
   if (!lastout)
     lastout = bufbeg;
-  while (pending > 0 && lastout < lim)
+  for (; 0 < pending && lastout < lim; pending--)
     {
       char *nl = memchr (lastout, eolbyte, lim - lastout);
-      size_t match_size;
-      --pending;
-      if (outleft
-          || ((execute (compiled_pattern, lastout, nl + 1 - lastout,
-                        &match_size, NULL) == (size_t) -1)
-              == !out_invert))
-        prline (lastout, nl + 1, SEP_CHAR_REJECTED);
-      else
-        pending = 0;
+      prline (lastout, nl + 1, SEP_CHAR_REJECTED);
     }
 }
 
@@ -1706,6 +1690,8 @@ static bool
 grepfile (int dirdesc, char const *name, bool follow, bool command_line)
 {
   int oflag = (O_RDONLY | O_NOCTTY
+               | (IGNORE_DUPLICATE_BRANCH_WARNING
+                  (binary ? O_BINARY : 0))
                | (follow ? 0 : O_NOFOLLOW)
                | (skip_devices (command_line) ? O_NONBLOCK : 0));
   int desc = openat_safer (dirdesc, name, oflag);
@@ -1868,11 +1854,6 @@ grepdesc (int desc, bool command_line)
       goto closeout;
     }
 
-  /* Set input to binary mode.  Pipes are simulated with files
-     on DOS, so this includes the case of "foo | grep bar".  */
-  if (O_BINARY && !isatty (desc))
-    set_binary_mode (desc, O_BINARY);
-
   count = grep (desc, &st, &ineof);
   if (count_matches)
     {
@@ -1889,11 +1870,11 @@ grepdesc (int desc, bool command_line)
         fflush_errno ();
     }
 
-  status = !count;
+  status = !count == !(list_files == LISTFILES_NONMATCHING);
 
   if (list_files == LISTFILES_NONE)
     finalize_input (desc, &st, ineof);
-  else if (list_files == (status ? LISTFILES_NONMATCHING : LISTFILES_MATCHING))
+  else if (status == 0)
     {
       print_filename ();
       putchar_errno ('\n' & filename_mask);
@@ -1913,6 +1894,8 @@ grep_command_line_arg (char const *arg)
   if (STREQ (arg, "-"))
     {
       filename = label;
+      if (binary)
+        xset_binary_mode (STDIN_FILENO, O_BINARY);
       return grepdesc (STDIN_FILENO, true);
     }
   else
@@ -1928,32 +1911,32 @@ usage (int status)
 {
   if (status != 0)
     {
-      fprintf (stderr, _("Usage: %s [OPTION]... PATTERN [FILE]...\n"),
+      fprintf (stderr, _("Usage: %s [OPTION]... PATTERNS [FILE]...\n"),
                getprogname ());
       fprintf (stderr, _("Try '%s --help' for more information.\n"),
                getprogname ());
     }
   else
     {
-      printf (_("Usage: %s [OPTION]... PATTERN [FILE]...\n"), getprogname ());
-      printf (_("Search for PATTERN in each FILE or standard input.\n"));
-      printf (_("PATTERN is, by default, a basic regular expression (BRE).\n"));
+      printf (_("Usage: %s [OPTION]... PATTERNS [FILE]...\n"), getprogname ());
+      printf (_("Search for PATTERNS in each FILE.\n"));
       printf (_("\
 Example: %s -i 'hello world' menu.h main.c\n\
+PATTERNS can contain multiple patterns separated by newlines.\n\
 \n\
-Regexp selection and interpretation:\n"), getprogname ());
+Pattern selection and interpretation:\n"), getprogname ());
       printf (_("\
-  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n\
-  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n\
-  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n\
-  -P, --perl-regexp         PATTERN is a Perl regular expression\n"));
+  -E, --extended-regexp     PATTERNS are extended regular expressions\n\
+  -F, --fixed-strings       PATTERNS are strings\n\
+  -G, --basic-regexp        PATTERNS are basic regular expressions\n\
+  -P, --perl-regexp         PATTERNS are Perl regular expressions\n"));
   /* -X is deliberately undocumented.  */
       printf (_("\
-  -e, --regexp=PATTERN      use PATTERN for matching\n\
-  -f, --file=FILE           obtain PATTERN from FILE\n\
+  -e, --regexp=PATTERNS     use PATTERNS for matching\n\
+  -f, --file=FILE           take PATTERNS from FILE\n\
   -i, --ignore-case         ignore case distinctions\n\
-  -w, --word-regexp         force PATTERN to match only whole words\n\
-  -x, --line-regexp         force PATTERN to match only whole lines\n\
+  -w, --word-regexp         match only whole words\n\
+  -x, --line-regexp         match only whole lines\n\
   -z, --null-data           a data line ends in 0 byte, not newline\n"));
       printf (_("\
 \n\
@@ -1965,16 +1948,16 @@ Miscellaneous:\n\
       printf (_("\
 \n\
 Output control:\n\
-  -m, --max-count=NUM       stop after NUM matches\n\
+  -m, --max-count=NUM       stop after NUM selected lines\n\
   -b, --byte-offset         print the byte offset with output lines\n\
   -n, --line-number         print line number with output lines\n\
       --line-buffered       flush output on every line\n\
-  -H, --with-filename       print the file name for each match\n\
+  -H, --with-filename       print file name with output lines\n\
   -h, --no-filename         suppress the file name prefix on output\n\
       --label=LABEL         use LABEL as the standard input file name prefix\n\
 "));
       printf (_("\
-  -o, --only-matching       show only the part of a line matching PATTERN\n\
+  -o, --only-matching       show only nonempty parts of lines that match\n\
   -q, --quiet, --silent     suppress all normal output\n\
       --binary-files=TYPE   assume that binary files are TYPE;\n\
                             TYPE is 'binary', 'text', or 'without-match'\n\
@@ -1990,16 +1973,16 @@ Output control:\n\
   -R, --dereference-recursive  likewise, but follow all symlinks\n\
 "));
       printf (_("\
-      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n\
-      --exclude=FILE_PATTERN  skip files and directories matching\
- FILE_PATTERN\n\
+      --include=GLOB        search only files that match GLOB (a file pattern)"
+                "\n\
+      --exclude=GLOB        skip files and directories matching GLOB\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
-      --exclude-dir=PATTERN  directories that match PATTERN will be skipped.\n\
+      --exclude-dir=GLOB    skip directories that match GLOB\n\
 "));
       printf (_("\
-  -L, --files-without-match  print only names of FILEs containing no match\n\
-  -l, --files-with-matches  print only names of FILEs containing matches\n\
-  -c, --count               print only a count of matching lines per FILE\n\
+  -L, --files-without-match  print only names of FILEs with no selected lines\n\
+  -l, --files-with-matches  print only names of FILEs with selected lines\n\
+  -c, --count               print only a count of selected lines per FILE\n\
   -T, --initial-tab         make tabs line up (if needed)\n\
   -Z, --null                print 0 byte after FILE name\n"));
       printf (_("\
@@ -2015,16 +1998,11 @@ Context control:\n\
       --colour[=WHEN]       use markers to highlight the matching strings;\n\
                             WHEN is 'always', 'never', or 'auto'\n\
   -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)\n\
-  -u, --unix-byte-offsets   report offsets as if CRs were not there\n\
-                            (MSDOS/Windows)\n\
 \n"));
       printf (_("\
-'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n\
-Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"));
-      printf (_("\
-When FILE is -, read standard input.  With no FILE, read . if a command-line\n\
--r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n\
-Exit status is 0 if any line is selected, 1 otherwise;\n\
+When FILE is '-', read standard input.  With no FILE, read '.' if\n\
+recursive, '-' otherwise.  With fewer than two FILEs, assume -h.\n\
+Exit status is 0 if any line (or file if -L) is selected, 1 otherwise;\n\
 if any error occurs and -q is not given, the exit status is 2.\n"));
       emit_bug_reporting_address ();
     }
@@ -2035,7 +2013,7 @@ if any error occurs and -q is not given, the exit status is 2.\n"));
 
 static struct
 {
-  char const name[12];
+  char name[12];
   int syntax; /* used if compile == GEAcompile */
   compile_fp_t compile;
   execute_fp_t execute;
@@ -2330,7 +2308,7 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
         {
         case (size_t) -2:
           n = len;
-          /* Fall through.  */
+          FALLTHROUGH;
         default:
           p = mempcpy (p, keys, n);
           break;
@@ -2338,7 +2316,7 @@ fgrep_to_grep_pattern (char **keys_p, size_t *len_p)
         case (size_t) -1:
           memset (&mb_state, 0, sizeof mb_state);
           n = 1;
-          /* Fall through.  */
+          FALLTHROUGH;
         case 1:
           switch (*keys)
             {
@@ -2369,11 +2347,12 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
   size_t len = *len_p;
   char *new_keys = xmalloc (len + 1);
   char *p = new_keys;
+  char const *q = keys;
   mbstate_t mb_state = { 0 };
 
   while (len != 0)
     {
-      switch (*keys)
+      switch (*q)
         {
         case '$': case '*': case '.': case '[': case '^':
           goto fail;
@@ -2385,7 +2364,7 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
 
         case '\\':
           if (1 < len)
-            switch (keys[1])
+            switch (q[1])
               {
               case '\n':
               case 'B': case 'S': case 'W': case'\'': case '<':
@@ -2397,9 +2376,9 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
               case '(': case '+': case '?': case '{': case '|':
                 if (matcher == G_MATCHER_INDEX)
                   goto fail;
-                /* Fall through.  */
+                FALLTHROUGH;
               default:
-                keys++, len--;
+                q++, len--;
                 break;
               }
           break;
@@ -2409,20 +2388,20 @@ try_fgrep_pattern (int matcher, char *keys, size_t *len_p)
         size_t n;
         if (match_icase)
           {
-            int ni = fgrep_icase_charlen (keys, len, &mb_state);
+            int ni = fgrep_icase_charlen (q, len, &mb_state);
             if (ni < 0)
               goto fail;
             n = ni;
           }
         else
           {
-            n = mb_clen (keys, len, &mb_state);
+            n = mb_clen (q, len, &mb_state);
             if (MB_LEN_MAX < n)
               goto fail;
           }
 
-        p = mempcpy (p, keys, n);
-        keys += n;
+        p = mempcpy (p, q, n);
+        q += n;
         len -= n;
       }
     }
@@ -2479,6 +2458,7 @@ main (int argc, char **argv)
   init_localeinfo (&localeinfo);
 
   atexit (clean_up_stdout);
+  c_stack_action (NULL);
 
   last_recursive = 0;
 
@@ -2548,11 +2528,13 @@ main (int argc, char **argv)
         break;
 
       case 'U':
-        dos_binary ();
+        if (O_BINARY)
+          binary = true;
         break;
 
       case 'u':
-        dos_unix_byte_offsets ();
+        /* Obsolete option; it has no effect.  FIXME: Diagnose use of
+           this option starting in (say) the year 2020.  */
         break;
 
       case 'V':
@@ -2593,9 +2575,18 @@ main (int argc, char **argv)
         break;
 
       case 'f':
-        fp = STREQ (optarg, "-") ? stdin : fopen (optarg, O_TEXT ? "rt" : "r");
-        if (!fp)
-          die (EXIT_TROUBLE, errno, "%s", optarg);
+        if (STREQ (optarg, "-"))
+          {
+            if (binary)
+              xset_binary_mode (STDIN_FILENO, O_BINARY);
+            fp = stdin;
+          }
+        else
+          {
+            fp = fopen (optarg, binary ? "rb" : "r");
+            if (!fp)
+              die (EXIT_TROUBLE, errno, "%s", optarg);
+          }
         oldcc = keycc;
         for (;; keycc += cc)
           {
@@ -2663,7 +2654,7 @@ main (int argc, char **argv)
 
       case 'R':
         fts_options = basic_fts_options | FTS_LOGICAL;
-        /* Fall through.  */
+        FALLTHROUGH;
       case 'r':
         directories = RECURSE_DIRECTORIES;
         last_recursive = prev_optind;
@@ -2782,8 +2773,10 @@ main (int argc, char **argv)
 
   if (show_version)
     {
-      version_etc (stdout, getprogname (), PACKAGE_NAME, VERSION, AUTHORS,
+      version_etc (stdout, getprogname (), PACKAGE_NAME, VERSION,
                    (char *) NULL);
+      puts (_("Written by Mike Haertel and others; see\n"
+              "<https://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>."));
       return EXIT_SUCCESS;
     }
 
@@ -2906,10 +2899,8 @@ main (int argc, char **argv)
   if ((argc - optind > 1 && !no_filenames) || with_filenames)
     out_file = 1;
 
-  /* Output is set to binary mode because we shouldn't convert
-     NL to CR-LF pairs, especially when grepping binary files.  */
-  if (O_BINARY && !isatty (STDOUT_FILENO))
-    set_binary_mode (STDOUT_FILENO, O_BINARY);
+  if (binary)
+    xset_binary_mode (STDOUT_FILENO, O_BINARY);
 
   /* Prefer sysconf for page size, as getpagesize typically returns int.  */
 #ifdef _SC_PAGESIZE
