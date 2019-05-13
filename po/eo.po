@@ -1,5 +1,5 @@
 # Esperanto translations for GNU grep.
-# Copyright (C) 2015 Free Software Foundation, Inc.
+# Copyright (C) 2018 Free Software Foundation, Inc.
 # This file is distributed under the same license as the grep package.
 #
 # “Jeder ist seines Glückes Schmied,
@@ -7,14 +7,14 @@
 #
 # D. Dale Gulledge <dsplat@rochester.rr.com>, 1999.
 # Edmund GRIMLEY EVANS <edmundo@rano.org>, 2000-2009.
-# Benno Schulenberg <benno@vertaalt.nl>, 2013, 2014, 2015, 2016.
+# Benno Schulenberg <benno@vertaalt.nl>, 2013, 2014, 2015, 2016, 2018.
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU grep 2.23.7\n"
+"Project-Id-Version: GNU grep 3.0.23-b00\n"
 "Report-Msgid-Bugs-To: bug-grep@gnu.org\n"
-"POT-Creation-Date: 2017-02-06 17:17-0800\n"
-"PO-Revision-Date: 2016-03-05 17:40+0100\n"
-"Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
+"POT-Creation-Date: 2018-12-20 20:39-0800\n"
+"PO-Revision-Date: 2018-09-16 12:44+0200\n"
+"Last-Translator: Benno Schulenberg <vertaling@coevern.nl>\n"
 "Language-Team: Esperanto <translation-team-eo@lists.sourceforge.net>\n"
 "Language: eo\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 1.0\n"
 
 #: lib/argmatch.c:134
 #, c-format
@@ -32,117 +31,100 @@ msgstr "nevalida argumento %s por %s"
 #: lib/argmatch.c:135
 #, c-format
 msgid "ambiguous argument %s for %s"
-msgstr "plursenca argumento %s por %s"
+msgstr "ambigua argumento %s por %s"
 
 #: lib/argmatch.c:154
 msgid "Valid arguments are:"
 msgstr "Validaj argumentoj estas:"
 
-#: lib/closeout.c:112 src/grep.c:1280
+#: lib/c-stack.c:208 lib/c-stack.c:301
+msgid "program error"
+msgstr ""
+
+#: lib/c-stack.c:209 lib/c-stack.c:302
+msgid "stack overflow"
+msgstr ""
+
+#: lib/closeout.c:122 src/grep.c:1273
 msgid "write error"
 msgstr "skrib-eraro"
 
-#: lib/dfa.c:949
+#: lib/dfa.c:970
 msgid "unbalanced ["
 msgstr "senpara ["
 
-#: lib/dfa.c:1071
+#: lib/dfa.c:1091
 msgid "invalid character class"
 msgstr "nevalida signoklaso"
 
-#: lib/dfa.c:1207
+#: lib/dfa.c:1217
 msgid "character class syntax is [[:space:]], not [:space:]"
 msgstr "sintakso de signoklaso estas ekzemple [[:spaco:]], ne [:spaco:]"
 
-#: lib/dfa.c:1275
+#: lib/dfa.c:1284
 msgid "unfinished \\ escape"
 msgstr "nefinita \\-eskapo"
 
-#: lib/dfa.c:1436
+#: lib/dfa.c:1445
 msgid "invalid content of \\{\\}"
 msgstr "nevalida enhavo de \\{\\}"
 
-#: lib/dfa.c:1439
+#: lib/dfa.c:1448
 msgid "regular expression too big"
 msgstr "regulesprimo tro grandas"
 
-#: lib/dfa.c:1853
+#: lib/dfa.c:1863
 msgid "unbalanced ("
 msgstr "senpara ("
 
-#: lib/dfa.c:1971
+#: lib/dfa.c:1981
 msgid "no syntax specified"
 msgstr "neniu sintakso indikatas"
 
-#: lib/dfa.c:1979
+#: lib/dfa.c:1992
 msgid "unbalanced )"
 msgstr "senpara )"
 
-#: lib/error.c:191
+#: lib/error.c:195
 msgid "Unknown system error"
 msgstr "Nekonata sistemeraro"
 
-#: lib/getopt.c:575 lib/getopt.c:604
+#: lib/getopt.c:278
 #, c-format
-msgid "%s: option '%s' is ambiguous; possibilities:"
-msgstr "%s: opcio «%s» estas plursenca; eblaĵoj estas:"
+msgid "%s: option '%s%s' is ambiguous\n"
+msgstr "%s: opcio «%s%s» estas ambigua\n"
 
-#: lib/getopt.c:619
+#: lib/getopt.c:284
 #, c-format
-msgid "%s: option '%s' is ambiguous\n"
-msgstr "%s: opcio «%s» estas ambigua\n"
+msgid "%s: option '%s%s' is ambiguous; possibilities:"
+msgstr "%s: opcio «%s%s» estas ambigua; eblaĵoj estas:"
 
-#: lib/getopt.c:654 lib/getopt.c:658
+#: lib/getopt.c:319
 #, c-format
-msgid "%s: option '--%s' doesn't allow an argument\n"
-msgstr "%s: opcio «--%s» ne toleras argumenton\n"
+msgid "%s: unrecognized option '%s%s'\n"
+msgstr "%s: nekonata opcio «%s%s»\n"
 
-#: lib/getopt.c:667 lib/getopt.c:672
+#: lib/getopt.c:345
 #, c-format
-msgid "%s: option '%c%s' doesn't allow an argument\n"
-msgstr "%s: opcio «%c%s» ne toleras argumenton\n"
+msgid "%s: option '%s%s' doesn't allow an argument\n"
+msgstr "%s: opcio «%s%s» ne toleras argumenton\n"
 
-#: lib/getopt.c:715 lib/getopt.c:734
+#: lib/getopt.c:360
 #, c-format
-msgid "%s: option '--%s' requires an argument\n"
-msgstr "--%s: opcio «%s» bezonas argumenton\n"
+msgid "%s: option '%s%s' requires an argument\n"
+msgstr "%s: opcio «%s%s» bezonas argumenton\n"
 
-#: lib/getopt.c:772 lib/getopt.c:775
-#, c-format
-msgid "%s: unrecognized option '--%s'\n"
-msgstr "%s: nekonata opcio «--%s»\n"
-
-#: lib/getopt.c:783 lib/getopt.c:786
-#, c-format
-msgid "%s: unrecognized option '%c%s'\n"
-msgstr "%s: nekonata opcio «%c%s»\n"
-
-#: lib/getopt.c:835 lib/getopt.c:838
+#: lib/getopt.c:621
 #, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s: nevalida opcio -- «%c»\n"
 
-#: lib/getopt.c:891 lib/getopt.c:908 lib/getopt.c:1118 lib/getopt.c:1136
+#: lib/getopt.c:636 lib/getopt.c:682
 #, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s: opcio bezonas argumenton -- «%c»\n"
 
-#: lib/getopt.c:964 lib/getopt.c:980
-#, c-format
-msgid "%s: option '-W %s' is ambiguous\n"
-msgstr "%s: opcio «-W %s» estas plursenca\n"
-
-#: lib/getopt.c:1004 lib/getopt.c:1022
-#, c-format
-msgid "%s: option '-W %s' doesn't allow an argument\n"
-msgstr "%s: opcio «-W %s» ne toleras argumenton\n"
-
-#: lib/getopt.c:1043 lib/getopt.c:1061
-#, c-format
-msgid "%s: option '-W %s' requires an argument\n"
-msgstr "%s: opcio «-W %s» bezonas argumenton\n"
-
-#: lib/obstack.c:338 lib/obstack.c:340 lib/xalloc-die.c:34 src/pcresearch.c:292
+#: lib/obstack.c:338 lib/obstack.c:340 lib/xalloc-die.c:34 src/pcresearch.c:313
 msgid "memory exhausted"
 msgstr "mankas sufiĉa memoro"
 
@@ -155,6 +137,11 @@ msgstr "ne eblas registri aktualan labordosierujon"
 #, c-format
 msgid "failed to return to initial working directory"
 msgstr "malsukcesis reveni al komenca labordosierujo"
+
+#: lib/xbinary-io.c:37
+#, c-format
+msgid "failed to set file descriptor text/binary mode"
+msgstr "malsukcesis agordi tekstan/duuman moduson de dosierpriaĵo"
 
 #. TRANSLATORS:
 #. Get translations for open and closing quotation marks.
@@ -175,13 +162,13 @@ msgstr "malsukcesis reveni al komenca labordosierujo"
 #. for your locale.
 #.
 #. If you don't know what to put here, please see
-#. <http://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
+#. <https://en.wikipedia.org/wiki/Quotation_marks_in_other_languages>
 #. and use glyphs suitable for your language.
-#: lib/quotearg.c:354
+#: lib/quotearg.c:362
 msgid "`"
 msgstr "«"
 
-#: lib/quotearg.c:355
+#: lib/quotearg.c:363
 msgid "'"
 msgstr "»"
 
@@ -253,16 +240,16 @@ msgstr "Regulesprimo tro grandas"
 msgid "Unmatched ) or \\)"
 msgstr "Senpara ) aŭ \\)"
 
-#: lib/regcomp.c:687
+#: lib/regcomp.c:688
 msgid "No previous regular expression"
 msgstr "Mankas antaŭa regulesprimo"
 
-#: lib/version-etc.c:74
+#: lib/version-etc.c:73
 #, c-format
 msgid "Packaged by %s (%s)\n"
 msgstr "Pakigita far %s (%s)\n"
 
-#: lib/version-etc.c:77
+#: lib/version-etc.c:76
 #, c-format
 msgid "Packaged by %s\n"
 msgstr "Pakigita far %s\n"
@@ -270,14 +257,15 @@ msgstr "Pakigita far %s\n"
 #. TRANSLATORS: Translate "(C)" to the copyright symbol
 #. (C-in-a-circle), if this symbol is available in the user's
 #. locale.  Otherwise, do not translate "(C)"; leave it as-is.
-#: lib/version-etc.c:84
+#: lib/version-etc.c:83
 msgid "(C)"
 msgstr "©"
 
-#: lib/version-etc.c:86
+#: lib/version-etc.c:85
+#, fuzzy
 msgid ""
 "\n"
-"License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl."
+"License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl."
 "html>.\n"
 "This is free software: you are free to change and redistribute it.\n"
 "There is NO WARRANTY, to the extent permitted by law.\n"
@@ -423,12 +411,13 @@ msgid "%s home page: <%s>\n"
 msgstr "Hejmpaĝo de %s: %s\n"
 
 #: lib/version-etc.c:253
-#, c-format
-msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
+#, fuzzy, c-format
+msgid "%s home page: <https://www.gnu.org/software/%s/>\n"
 msgstr "Hejmpaĝo de «%s»: http://www.gnu.org/software/%s/\n"
 
 #: lib/version-etc.c:256
-msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
+#, fuzzy
+msgid "General help using GNU software: <https://www.gnu.org/gethelp/>\n"
 msgstr "Ĝenerala helpo por uzi GNU-programojn: http://www.gnu.org/gethelp/\n"
 
 #: lib/xstrtol-error.c:63
@@ -446,99 +435,86 @@ msgstr "nevalida sufikso en argumento de %s%s: «%s»"
 msgid "%s%s argument '%s' too large"
 msgstr "argumento de %s%s tro grandas: «%s»"
 
-#. This is a proper name. See the gettext manual, section Names.
-#: src/grep.c:58
-msgid "Mike Haertel"
-msgstr "Majk HERTEL (Mike Haertel)"
-
-#: src/grep.c:59
-msgid "others, see <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
-msgstr "aliuloj, vidu <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
-
-#: src/grep.c:588
+#: src/grep.c:582
 msgid "(standard input)"
 msgstr "(ĉefenigujo)"
 
-#: src/grep.c:768
+#: src/grep.c:762
 msgid "invalid context length argument"
 msgstr "nevalida kuntekstlongeca argumento"
 
-#: src/grep.c:831
+#: src/grep.c:827
 msgid "input is too large to count"
 msgstr "enigo tro longas por nombri"
 
-#: src/grep.c:1594
+#: src/grep.c:1578
 #, c-format
 msgid "Binary file %s matches\n"
 msgstr "Duuma dosiero %s kongruas\n"
 
-#: src/grep.c:1642
+#: src/grep.c:1626
 #, c-format
 msgid "warning: %s: %s"
 msgstr "averto: %s: %s"
 
-#: src/grep.c:1643
+#: src/grep.c:1627
 msgid "recursive directory loop"
 msgstr "rikura ciklo de dosierujoj"
 
-#: src/grep.c:1857
+#: src/grep.c:1843
 #, c-format
 msgid "input file %s is also the output"
 msgstr "eniga dosiero %s estas ankaŭ la eliga dosiero; ĝi ignoriĝas"
 
-#: src/grep.c:1923 src/grep.c:1930
-#, c-format
-msgid "Usage: %s [OPTION]... PATTERN [FILE]...\n"
+#: src/grep.c:1906 src/grep.c:1913
+#, fuzzy, c-format
+msgid "Usage: %s [OPTION]... PATTERNS [FILE]...\n"
 msgstr "Uzmaniero:  %s [OPCIO...] ŜABLONO [DOSIERO...]\n"
 
-#: src/grep.c:1925
+#: src/grep.c:1908
 #, c-format
 msgid "Try '%s --help' for more information.\n"
 msgstr "Tajpu '%s --help' por pli da informoj.\n"
 
-#: src/grep.c:1931
-#, c-format
-msgid "Search for PATTERN in each FILE or standard input.\n"
-msgstr "Serĉas ŜABLONOn en ĉiu DOSIERO aŭ en ĉefenigujo.\n"
+#: src/grep.c:1914
+#, fuzzy, c-format
+msgid "Search for PATTERNS in each FILE.\n"
+msgstr "Serĉas ŜABLONOn en ĉiu DOSIERO.\n"
 
-#: src/grep.c:1932
-#, c-format
-msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
-msgstr "ŜABLONO defaŭlte estas baza regulesprimo (BRE).\n"
-
-#: src/grep.c:1933
-#, c-format
+#: src/grep.c:1915
+#, fuzzy, c-format
 msgid ""
 "Example: %s -i 'hello world' menu.h main.c\n"
+"PATTERNS can contain multiple patterns separated by newlines.\n"
 "\n"
-"Regexp selection and interpretation:\n"
+"Pattern selection and interpretation:\n"
 msgstr ""
 "Ekzemplo:  %s -i 'hello world' menu.h main.c\n"
 "\n"
-"Elekto kaj interpreto de regulesprimoj:\n"
+"Elekto kaj interpreto de ŝablono:\n"
 
-#: src/grep.c:1937
-#, c-format
+#: src/grep.c:1920
+#, fuzzy, c-format
 msgid ""
-"  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)\n"
-"  -F, --fixed-strings       PATTERN is a set of newline-separated strings\n"
-"  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)\n"
-"  -P, --perl-regexp         PATTERN is a Perl regular expression\n"
+"  -E, --extended-regexp     PATTERNS are extended regular expressions\n"
+"  -F, --fixed-strings       PATTERNS are strings\n"
+"  -G, --basic-regexp        PATTERNS are basic regular expressions\n"
+"  -P, --perl-regexp         PATTERNS are Perl regular expressions\n"
 msgstr ""
 "  -E, --extended-regexp     ŜABLONO estas etendita regulesprimo (ERE)\n"
 "  -F, --fixed-strings       ŜABLONO estas aro da ĉenoj apartigitaj de "
 "linifinoj\n"
-"  -G, --basic-regexp        ŜABLONO estas baza regulesprimo (BRE)\n"
+"  -G, --basic-regexp        ŜABLONO estas baza regulesprimo (BRE, defaŭlta)\n"
 "  -P, --perl-regexp         ŜABLONO estas regulesprimo de Perl\n"
 
-#: src/grep.c:1943
-#, c-format
+#: src/grep.c:1926
+#, fuzzy, c-format
 msgid ""
-"  -e, --regexp=PATTERN      use PATTERN for matching\n"
-"  -f, --file=FILE           obtain PATTERN from FILE\n"
+"  -e, --regexp=PATTERNS     use PATTERNS for matching\n"
+"  -f, --file=FILE           take PATTERNS from FILE\n"
 "  -i, --ignore-case         ignore case distinctions\n"
-"  -w, --word-regexp         force PATTERN to match only whole words\n"
-"  -x, --line-regexp         force PATTERN to match only whole lines\n"
+"  -w, --word-regexp         match only whole words\n"
+"  -x, --line-regexp         match only whole lines\n"
 "  -z, --null-data           a data line ends in 0 byte, not newline\n"
 msgstr ""
 "  -e, --regexp=ŜABLONO      uzi ŜABLONOn kiel regulesprimon\n"
@@ -549,7 +525,7 @@ msgstr ""
 "  -z, --null-data           datenlinio finiĝas per bitoko 0, ne per "
 "linifino\n"
 
-#: src/grep.c:1950
+#: src/grep.c:1933
 #, c-format
 msgid ""
 "\n"
@@ -566,34 +542,34 @@ msgstr ""
 "  -V, --version             montri programversion kaj eliri\n"
 "      --help                montri ĉi tiun helpon kaj eliri\n"
 
-#: src/grep.c:1957
+#: src/grep.c:1940
 #, c-format
 msgid ""
 "\n"
 "Output control:\n"
-"  -m, --max-count=NUM       stop after NUM matches\n"
+"  -m, --max-count=NUM       stop after NUM selected lines\n"
 "  -b, --byte-offset         print the byte offset with output lines\n"
 "  -n, --line-number         print line number with output lines\n"
 "      --line-buffered       flush output on every line\n"
-"  -H, --with-filename       print the file name for each match\n"
+"  -H, --with-filename       print file name with output lines\n"
 "  -h, --no-filename         suppress the file name prefix on output\n"
 "      --label=LABEL         use LABEL as the standard input file name "
 "prefix\n"
 msgstr ""
 "\n"
 "Regado de la eligo:\n"
-"  -m, --max-count==NOMBRO   halti post NOMBRO da trafoj\n"
+"  -m, --max-count==NOMBRO   halti post NOMBRO da elektitaj linioj\n"
 "  -b, --byte-offset         montri la bitoknumeron kun eligataj linioj\n"
 "  -n, --line-number         montri la lininumeron kun eligataj linioj\n"
 "      --line-buffered       peli la eligon post ĉiu linio\n"
-"  -H, --with-filename       montri la dosiernomon por ĉiu trafo\n"
+"  -H, --with-filename       montri la dosiernomon antaŭ eligataj linioj\n"
 "  -h, --no-filename         subpremi la prefiksan dosiernomon ĉe eligo\n"
 "      --label=ETIKEDO       uzi ETIKEDOn kiel dosiernomon de ĉefenigujo\n"
 
-#: src/grep.c:1968
-#, c-format
+#: src/grep.c:1951
+#, fuzzy, c-format
 msgid ""
-"  -o, --only-matching       show only the part of a line matching PATTERN\n"
+"  -o, --only-matching       show only nonempty parts of lines that match\n"
 "  -q, --quiet, --silent     suppress all normal output\n"
 "      --binary-files=TYPE   assume that binary files are TYPE;\n"
 "                            TYPE is 'binary', 'text', or 'without-match'\n"
@@ -608,7 +584,7 @@ msgstr ""
 "                              aŭ 'without-match' (sen-trafa)\n"
 "  -a, --text                egalas al «--binary-files=text»\n"
 
-#: src/grep.c:1975
+#: src/grep.c:1958
 #, c-format
 msgid ""
 "  -I                        equivalent to --binary-files=without-match\n"
@@ -627,15 +603,14 @@ msgstr ""
 "                              AGO estus 'read' (legi), aŭ 'skip' (ignori)\n"
 "  -R, -r, --recursive       egalas al «--directories=recurse»\n"
 
-#: src/grep.c:1984
-#, c-format
+#: src/grep.c:1967
+#, fuzzy, c-format
 msgid ""
-"      --include=FILE_PATTERN  search only files that match FILE_PATTERN\n"
-"      --exclude=FILE_PATTERN  skip files and directories matching "
-"FILE_PATTERN\n"
+"      --include=GLOB        search only files that match GLOB (a file "
+"pattern)\n"
+"      --exclude=GLOB        skip files and directories matching GLOB\n"
 "      --exclude-from=FILE   skip files matching any file pattern from FILE\n"
-"      --exclude-dir=PATTERN  directories that match PATTERN will be "
-"skipped.\n"
+"      --exclude-dir=GLOB    skip directories that match GLOB\n"
 msgstr ""
 "      --include=ŜABLONO     ekzameni nur dosierojn kiuj kongruas kun "
 "ŜABLONO\n"
@@ -644,12 +619,13 @@ msgstr ""
 "DSRO\n"
 "      --exclude-dir=ŜABLONO ignori dosierujojn kiuj kongruas kun ŜABLONO\n"
 
-#: src/grep.c:1991
+#: src/grep.c:1974
 #, c-format
 msgid ""
-"  -L, --files-without-match  print only names of FILEs containing no match\n"
-"  -l, --files-with-matches  print only names of FILEs containing matches\n"
-"  -c, --count               print only a count of matching lines per FILE\n"
+"  -L, --files-without-match  print only names of FILEs with no selected "
+"lines\n"
+"  -l, --files-with-matches  print only names of FILEs with selected lines\n"
+"  -c, --count               print only a count of selected lines per FILE\n"
 "  -T, --initial-tab         make tabs line up (if needed)\n"
 "  -Z, --null                print 0 byte after FILE name\n"
 msgstr ""
@@ -660,7 +636,7 @@ msgstr ""
 "  -T, --initial-tab         rektigi la TAB-signojn (se necesas)\n"
 "  -Z, --null                montri la bitokon «0» post dosiernomo\n"
 
-#: src/grep.c:1997
+#: src/grep.c:1980
 #, c-format
 msgid ""
 "\n"
@@ -675,7 +651,7 @@ msgstr ""
 "  -A, --after-context=NOM   montri NOM liniojn da posta kunteksto\n"
 "  -C, --context=NOMBRO      egalas al «-A NOMBRO -B NOMBRO»\n"
 
-#: src/grep.c:2004
+#: src/grep.c:1987
 #, c-format
 msgid ""
 "  -NUM                      same as --context=NUM\n"
@@ -684,8 +660,6 @@ msgid ""
 "                            WHEN is 'always', 'never', or 'auto'\n"
 "  -U, --binary              do not strip CR characters at EOL (MSDOS/"
 "Windows)\n"
-"  -u, --unix-byte-offsets   report offsets as if CRs were not there\n"
-"                            (MSDOS/Windows)\n"
 "\n"
 msgstr ""
 "  -NOMBRO                   egalas al «--context=NOMBRO»\n"
@@ -694,65 +668,60 @@ msgstr ""
 "                              KIAM estus 'always' (ĉiam), 'never' (neniam),\n"
 "                              aŭ 'auto' (aŭtomate)\n"
 "  -U, --binary              ne forigi \\r-signojn ĉe linifino (MSDOS)\n"
-"  -u, --unix-byte-offsets   doni bitoknumerojn kvazaŭ \\r-signoj mankus "
-"(MSDOS)\n"
 "\n"
 
-#: src/grep.c:2013
-#, c-format
+#: src/grep.c:1994
+#, fuzzy, c-format
 msgid ""
-"'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n"
-"Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"
-msgstr ""
-"Rekta alvoko kiel aŭ 'egrep' aŭ 'fgrep' malrekomendatas;\n"
-"'egrep' signifas 'grep -E; 'fgrep' signifas 'grep -F'.\n"
-
-#: src/grep.c:2016
-#, c-format
-msgid ""
-"When FILE is -, read standard input.  With no FILE, read . if a command-"
-"line\n"
-"-r is given, - otherwise.  If fewer than two FILEs are given, assume -h.\n"
-"Exit status is 0 if any line is selected, 1 otherwise;\n"
+"When FILE is '-', read standard input.  With no FILE, read '.' if\n"
+"recursive, '-' otherwise.  With fewer than two FILEs, assume -h.\n"
+"Exit status is 0 if any line (or file if -L) is selected, 1 otherwise;\n"
 "if any error occurs and -q is not given, the exit status is 2.\n"
 msgstr ""
 "Kiam DOSIERO estas «-», ĉefenigujo legiĝas.\n"
-"Kiam DOSIERO mankas, «.» legiĝas se «-r» inidikatas, alie «-» legiĝas.\n"
-"Kiam malpli ol du DOSIEROJ indikatas, «-h» supoziĝas.\n"
+"Kiam DOSIERO mankas, «.» legiĝas se rikura, alie «-» legiĝas.\n"
+"Kiam malpli ol du DOSIEROj indikatas, «-h» supoziĝas.\n"
 "Elirstato estas 0 se iu linio elektiĝis, alie 1;\n"
 "elirstato estas 2 se iu eraro okazis kaj «-q» ne indikatis.\n"
 
-#: src/grep.c:2056
+#: src/grep.c:2034
 msgid "conflicting matchers specified"
 msgstr "pluraj esprimtipoj indikatas"
 
-#: src/grep.c:2060
+#: src/grep.c:2038
 #, c-format
 msgid "invalid matcher %s"
 msgstr "nevalida esprimtipo %s"
 
-#: src/grep.c:2479
+#: src/grep.c:2459
 #, c-format
 msgid "warning: GREP_OPTIONS is deprecated; please use an alias or script"
 msgstr "averto: GREP_OPTIONS evitindas; bonvolu uzi 'alias' aŭ skripton"
 
-#: src/grep.c:2506
+#: src/grep.c:2486
 msgid "unknown devices method"
 msgstr "nekonata ago por aparatoj"
 
-#: src/grep.c:2639
+#: src/grep.c:2630
 msgid "invalid max count"
 msgstr "nevalida maksimuma nombro"
 
-#: src/grep.c:2697
+#: src/grep.c:2688
 msgid "unknown binary-files type"
 msgstr "nekonata ago por duumaj dosieroj"
 
-#: src/pcresearch.c:81
+#: src/grep.c:2770
+#, fuzzy
+msgid ""
+"Written by Mike Haertel and others; see\n"
+"<https://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>."
+msgstr "aliuloj, vidu <http://git.sv.gnu.org/cgit/grep.git/tree/AUTHORS>"
+
+#: src/pcresearch.c:86
 msgid "failed to allocate memory for the PCRE JIT stack"
 msgstr "mankas sufiĉa memoro por la PCRE-JIT-stako"
 
-#: src/pcresearch.c:98
+#: src/pcresearch.c:118
 msgid ""
 "support for the -P option is not compiled into this --disable-perl-regexp "
 "binary"
@@ -760,41 +729,69 @@ msgstr ""
 "opcio «-P» ne funkcias en ĉi tiu programo ĉar ĝi kompiliĝis kun «--disable-"
 "perl-regexp»"
 
-#: src/pcresearch.c:120
+#: src/pcresearch.c:140
 msgid "-P supports only unibyte and UTF-8 locales"
 msgstr "opcio «-P» subtenas nur unubajtajn kaj UTF-8-ajn lokaĵojn"
 
-#: src/pcresearch.c:126
+#: src/pcresearch.c:146
 msgid "the -P option only supports a single pattern"
 msgstr "opcio «-P» akceptas nur unuopan ŝablonon"
 
-#: src/pcresearch.c:168
+#: src/pcresearch.c:189
 msgid "internal error (should never happen)"
 msgstr "**interna eraro** (devus neniam okazi)"
 
-#: src/pcresearch.c:193
+#: src/pcresearch.c:214
 msgid "internal error"
 msgstr "**interna eraro**"
 
-#: src/pcresearch.c:216
+#: src/pcresearch.c:237
 msgid "exceeded PCRE's line length limit"
 msgstr "transpasiĝis linilongecan limon de PCRE"
 
-#: src/pcresearch.c:296
+#: src/pcresearch.c:317
 msgid "exhausted PCRE JIT stack"
 msgstr "la PCRE-JIT-stako tute pleniĝis"
 
-#: src/pcresearch.c:300
+#: src/pcresearch.c:321
 msgid "exceeded PCRE's backtracking limit"
 msgstr "transpasiĝis retroreferencan limon de PCRE"
 
-#: src/pcresearch.c:307
+#: src/pcresearch.c:328
 #, c-format
 msgid "internal PCRE error: %d"
 msgstr "**interna eraro** en PCRE: %d"
 
+#~ msgid "Mike Haertel"
+#~ msgstr "Majk HERTEL (Mike Haertel)"
+
+#~ msgid "%s: option '--%s' doesn't allow an argument\n"
+#~ msgstr "%s: opcio «--%s» ne toleras argumenton\n"
+
+#~ msgid "%s: unrecognized option '--%s'\n"
+#~ msgstr "%s: nekonata opcio «--%s»\n"
+
+#~ msgid "%s: option '-W %s' is ambiguous\n"
+#~ msgstr "%s: opcio «-W %s» estas plursenca\n"
+
+#~ msgid "%s: option '-W %s' doesn't allow an argument\n"
+#~ msgstr "%s: opcio «-W %s» ne toleras argumenton\n"
+
+#~ msgid "%s: option '-W %s' requires an argument\n"
+#~ msgstr "%s: opcio «-W %s» bezonas argumenton\n"
+
 #~ msgid "lseek failed"
 #~ msgstr "malsukcesis 'lseek'"
+
+#~ msgid "PATTERN is, by default, a basic regular expression (BRE).\n"
+#~ msgstr "ŜABLONO defaŭlte estas baza regulesprimo (BRE).\n"
+
+#~ msgid ""
+#~ "'egrep' means 'grep -E'.  'fgrep' means 'grep -F'.\n"
+#~ "Direct invocation as either 'egrep' or 'fgrep' is deprecated.\n"
+#~ msgstr ""
+#~ "Rekta alvoko kiel aŭ 'egrep' aŭ 'fgrep' malrekomendatas;\n"
+#~ "'egrep' signifas 'grep -E; 'fgrep' signifas 'grep -F'.\n"
 
 #~ msgid "unescaped ^ or $ not supported with -Pz"
 #~ msgstr "seneskapa ^ aŭ $ ne subtenatas kun opcio «-Pz»"

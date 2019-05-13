@@ -1,5 +1,79 @@
 GNU grep NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 3.3 (2018-12-20) [stable]
+
+** Bug fixes
+
+  Some uses of \b in the C locale and with the DFA matcher would fail, e.g.,
+  the following would print nothing (it should print the input line):
+    echo 123-x|LC_ALL=C grep '.\bx'
+  Using a multibyte locale, using certain regexp constructs (some ranges,
+  backreferences), or forcing use of the PCRE matcher via --perl-regexp (-P)
+  would avoid the bug.
+  [bug introduced in grep 2.3]
+
+
+* Noteworthy changes in release 3.2 (2018-12-20) [stable]
+
+** Changes in behavior
+
+  The --files-without-match (-L) option now causes grep to succeed
+  when a file is listed, instead of when a line is selected.  This
+  resembles what git-grep does.
+
+** Bug fixes
+
+  The --recursive (-r) option no longer fails on MS-Windows.
+  [bug introduced in grep 2.11]
+
+** Improvements
+
+  An over-30x performance improvement when many 'or'd expressions
+  share a common prefix, thanks to improvements in gnulib's dfa.c,
+  by Norihiro Tanaka.  See gnulib commits v0.1-2110-ge648401be,
+  v0.1-2111-g4299106ce, v0.1-2117-g617a60974
+
+  An additional 3-23% speed-up when searching large files, via
+  increased initial buffer size.
+
+  grep now diagnoses stack overflow.  Before grep-2.6, the included
+  regexp code would detect it.  Since 2.6, grep defaulted to using
+  glibc's regexp, which lost that capability.
+
+
+* Noteworthy changes in release 3.1 (2017-07-02) [stable]
+
+** Improvements
+
+  grep '[0-9]' is now just as fast as grep '[[:digit:]]' when run
+  in a multi-byte locale.  Before, it was several times slower.
+
+** Changes in behavior
+
+  Context no longer excludes selected lines omitted because of -m.
+  For example, 'grep "^" -m1 -A1' now outputs the first two input
+  lines, not just the first line.  This fixes a glitch that has been
+  present since -m was added in grep 2.5.
+
+  The following changes affect only MS-Windows platforms.  First, the
+  --binary (-U) option now governs whether binary I/O is used, instead
+  of a heuristic that was sometimes incorrect.  Second, the
+  --unix-byte-offsets (-u) option now has no effect on MS-Windows too.
+
+
+* Noteworthy changes in release 3.0 (2017-02-09) [stable]
+
+** Bug fixes
+
+  grep without -F no longer goes awry when given two or more patterns
+  that contain no special characters other than '\' and also contain a
+  subpattern like '\.' that escapes a character to make it ordinary.
+  [bug introduced in grep 2.28]
+
+  grep no longer fails to build on PCRE versions before 8.20.
+  [bug introduced in grep 2.28]
+
+
 * Noteworthy changes in release 2.28 (2017-02-06) [stable]
 
 ** Bug fixes
@@ -930,7 +1004,7 @@ Version 2.4:
 
   - The --revert-match option has been renamed to --invert-match.
 
-  - The --fixed-regexp option has been renamed to --fixed-string.
+  - The --fixed-regexp option has been renamed to --fixed-strings.
 
   - New option -H or --with-filename.
 
@@ -1068,7 +1142,7 @@ necessary to track the evolution of the regex package, and since
 I was changing it anyway I decided to do a general cleanup.
 
 ========================================================================
-Copyright (C) 1992, 1997-2002, 2004-2017 Free Software Foundation, Inc.
+Copyright (C) 1992, 1997-2002, 2004-2018 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
