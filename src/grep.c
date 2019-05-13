@@ -51,6 +51,9 @@
 #include "xalloc.h"
 #include "xbinary-io.h"
 #include "xstrtol.h"
+#ifdef __OS2__
+#include "fnmatch.h"
+#endif
 
 enum { SEP_CHAR_SELECTED = ':' };
 enum { SEP_CHAR_REJECTED = '-' };
@@ -768,7 +771,11 @@ context_length_arg (char const *str, intmax_t *out)
 static int
 exclude_options (bool command_line)
 {
+#ifdef __OS2__
+  return FNM_CASEFOLD | EXCLUDE_WILDCARDS | (command_line ? 0 : EXCLUDE_ANCHORED);
+#else
   return EXCLUDE_WILDCARDS | (command_line ? 0 : EXCLUDE_ANCHORED);
+#endif
 }
 
 /* Return true if the file with NAME should be skipped.
@@ -1979,6 +1986,8 @@ Output control:\n\
       --exclude=GLOB        skip files and directories matching GLOB\n\
       --exclude-from=FILE   skip files matching any file pattern from FILE\n\
       --exclude-dir=GLOB    skip directories that match GLOB\n\
+                            on OS/2 all include or exclude pattern are searched\n\
+                            case insensitive\n\
 "));
       printf (_("\
   -L, --files-without-match print only names of FILEs with no selected lines\n\
