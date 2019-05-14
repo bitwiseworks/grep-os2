@@ -65,14 +65,22 @@ ME_=`expr "./$0" : '.*/\(.*\)$'`
 # Prepare PATH_SEPARATOR.
 # The user is always right.
 if test "${PATH_SEPARATOR+set}" != set; then
+  echo "path_sep: $PATH_SEPARATOR"
   # Determine PATH_SEPARATOR by trying to find /bin/sh in a PATH which
   # contains only /bin. Note that ksh looks also at the FPATH variable,
   # so we have to set that as well for the test.
+  case `(uname -o) 2>/dev/null` in
+  OS/2)
+  PATH_SEPARATOR=';'
+  ;;
+  *)
   PATH_SEPARATOR=:
   (PATH='/bin;/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 \
     && { (PATH='/bin:/bin'; FPATH=$PATH; sh -c :) >/dev/null 2>&1 \
            || PATH_SEPARATOR=';'
        }
+  ;;
+  esac
 fi
 
 # We use a trap below for cleanup.  This requires us to go through
@@ -445,6 +453,7 @@ path_prepend_ ()
       /* | ?:*) abs_path_dir_=$path_dir_;;
       *) abs_path_dir_=$initial_cwd_/$path_dir_;;
     esac
+    echo "Path_Dir: $path_dir_ Path_sep: $PATH_SEPARATOR Abs_path: $abs_path_dir_"
     case $abs_path_dir_ in
       *$PATH_SEPARATOR*) fail_ "invalid path dir: '$abs_path_dir_'";;
     esac
