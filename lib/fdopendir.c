@@ -37,8 +37,10 @@
 #  define REPLACE_FCHDIR 0
 # endif
 
+# ifndef __KLIBC__
 static DIR *fdopendir_with_dup (int, int, struct saved_cwd const *);
 static DIR *fd_clone_opendir (int, struct saved_cwd const *);
+#endif
 
 /* Replacement for POSIX fdopendir.
 
@@ -132,6 +134,7 @@ fdopendir (int fd)
    If REPLACE_FCHDIR or CWD is null, use opendir ("/proc/self/fd/...",
    falling back on fchdir metadata.  Otherwise, CWD is a saved version
    of the working directory; use fchdir/opendir(".")/restore_cwd(CWD).  */
+# ifndef __KLIBC__
 static DIR *
 fdopendir_with_dup (int fd, int older_dupfd, struct saved_cwd const *cwd)
 {
@@ -222,6 +225,7 @@ fd_clone_opendir (int fd, struct saved_cwd const *cwd)
         }
     }
 }
+#endif
 
 #else /* HAVE_FDOPENDIR */
 
