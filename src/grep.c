@@ -861,7 +861,7 @@ reset (int fd, struct stat const *st)
 
   if (seek_failed)
     {
-      if (errno != ESPIPE)
+      if (errno != ESPIPE && errno != EOPNOTSUPP)
         {
           suppressible_error (errno);
           return false;
@@ -1707,7 +1707,7 @@ grepfile (int dirdesc, char const *name, bool follow, bool command_line)
     {
       char path[MAXPATHLEN];
       _abspath(path, name, sizeof(path)-1);
-      int desc = openat_safer (dirdesc, path, oflag);
+      desc = openat_safer (dirdesc, path, oflag);
     }
 #endif
   if (desc < 0)
