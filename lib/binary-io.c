@@ -1,5 +1,5 @@
 /* Binary mode I/O.
-   Copyright 2017-2018 Free Software Foundation, Inc.
+   Copyright 2017-2020 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,4 +35,5 @@ set_binary_mode (int fd, int mode)
   else
     return __gl_setmode (fd, mode);
 }
+
 #endif
