@@ -20,6 +20,7 @@ m4/intdiv0.m4
 m4/intl.m4
 m4/intldir.m4
 m4/intmax.m4
+m4/longlong.m4
 m4/printf-posix.m4
 m4/uintmax_t.m4
 m4/visibility.m4
