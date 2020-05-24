@@ -174,7 +174,7 @@ printf "\\351" 2>/dev/null \
   | LC_ALL=C tr "\\351" x | LC_ALL=C grep "^x$" > /dev/null \
   || exit 1
 f_local_() { local v=1; }; f_local_ || exit 1
-f_dash_local_fail_() { local t=$(printf " 1"); }; f_dash_local_fail_
+#f_dash_local_fail_() { local t=$(printf " 1"); }; f_dash_local_fail_
 score_=10
 if test "$VERBOSE" = yes; then
   test -n "$( (exec 3>&1; set -x; P=1 true 2>&3) 2> /dev/null)" && score_=9
@@ -201,7 +201,7 @@ else
 
   # Search for a shell that meets our requirements.
   for re_shell_ in __current__ "${CONFIG_SHELL:-no_shell}" \
-      /bin/sh bash dash zsh pdksh fail
+      /bin/sh dash bash zsh pdksh fail
   do
     test "$re_shell_" = no_shell && continue
 
