@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test binary files in unibyte locales with encoding errors
 
-# Copyright 2016-2020 Free Software Foundation, Inc.
+# Copyright 2016-2022 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ require_unibyte_locale
 fail=0
 
 printf 'a\n\200\nb\n' >in || framework_failure_
-printf 'a\nBinary file in matches\n' >exp || framework_failure_
+printf 'a\n' >exp || framework_failure_
 grep . in >out || fail=1
 
 # In some unibyte locales, \200 is an encoding error;

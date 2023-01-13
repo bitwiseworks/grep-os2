@@ -1,10 +1,10 @@
 /* Stack overflow handling.
 
-   Copyright (C) 2002, 2004, 2008-2020 Free Software Foundation, Inc.
+   Copyright (C) 2002, 2004, 2008-2022 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3 of the License, or
+   the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -15,6 +15,10 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 /* Set up ACTION so that it is invoked on C stack overflow and on other,
    stack-unrelated, segmentation violation.
@@ -33,12 +37,21 @@
 
    A null ACTION acts like an action that does nothing.
 
-   ACTION must be async-signal-safe.  ACTION together with its callees
-   must not require more than SIGSTKSZ bytes of stack space.  Also,
-   ACTION should not call longjmp, because this implementation does
-   not guarantee that it is safe to return to the original stack.
+   Restrictions:
+   - ACTION must be async-signal-safe.
+   - ACTION together with its callees must not require more than 64 KiB of
+     stack space.
+   - ACTION must not create and then invoke nested functions
+     <https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html>, because
+     this implementation does not guarantee an executable stack.
+   - ACTION should not call longjmp, because this implementation does not
+     guarantee that it is safe to return to the original stack.
 
    This function may install a handler for the SIGSEGV signal or for the SIGBUS
    signal or exercise other system dependent exception handling APIs.  */
 
 extern int c_stack_action (_GL_ASYNC_SAFE void (* /*action*/) (int));
+
+# ifdef __cplusplus
+}
+# endif

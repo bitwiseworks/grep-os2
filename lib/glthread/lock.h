@@ -1,18 +1,18 @@
 /* Locking in multithreaded situations.
-   Copyright (C) 2005-2020 Free Software Foundation, Inc.
+   Copyright (C) 2005-2022 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
-   any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, see <https://www.gnu.org/licenses/>.  */
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* Written by Bruno Haible <bruno@clisp.org>, 2005.
    Based on GCC's gthr-posix.h, gthr-posix95.h, gthr-win32.h.  */
@@ -81,7 +81,9 @@
 #include <stdlib.h>
 
 #if !defined c11_threads_in_use
-# if HAVE_THREADS_H && USE_POSIX_THREADS_WEAK
+# if HAVE_THREADS_H && USE_POSIX_THREADS_FROM_LIBC
+#  define c11_threads_in_use() 1
+# elif HAVE_THREADS_H && USE_POSIX_THREADS_WEAK
 #  include <threads.h>
 #  pragma weak thrd_exit
 #  define c11_threads_in_use() (thrd_exit != NULL)
@@ -505,10 +507,19 @@ extern int glthread_recursive_lock_destroy_multithreaded (gl_recursive_lock_t *l
 typedef pthread_once_t gl_once_t;
 # define gl_once_define(STORAGECLASS, NAME) \
     STORAGECLASS pthread_once_t NAME = PTHREAD_ONCE_INIT;
-# define glthread_once(ONCE_CONTROL, INITFUNCTION) \
-    (pthread_in_use ()                                                         \
-     ? pthread_once (ONCE_CONTROL, INITFUNCTION)                               \
-     : (glthread_once_singlethreaded (ONCE_CONTROL) ? (INITFUNCTION (), 0) : 0))
+# if PTHREAD_IN_USE_DETECTION_HARD || USE_POSIX_THREADS_WEAK
+#  define glthread_once(ONCE_CONTROL, INITFUNCTION) \
+     (pthread_in_use ()                                                        \
+      ? pthread_once (ONCE_CONTROL, INITFUNCTION)                              \
+      : (glthread_once_singlethreaded (ONCE_CONTROL) ? (INITFUNCTION (), 0) : 0))
+# else
+#  define glthread_once(ONCE_CONTROL, INITFUNCTION) \
+     (pthread_in_use ()                                                        \
+      ? glthread_once_multithreaded (ONCE_CONTROL, INITFUNCTION)               \
+      : (glthread_once_singlethreaded (ONCE_CONTROL) ? (INITFUNCTION (), 0) : 0))
+extern int glthread_once_multithreaded (pthread_once_t *once_control,
+                                        void (*init_function) (void));
+# endif
 extern int glthread_once_singlethreaded (pthread_once_t *once_control);
 
 # ifdef __cplusplus

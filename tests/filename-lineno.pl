@@ -4,7 +4,7 @@
 # file or line number from which the offending regular expression came.
 # With 2.26, now, each such diagnostic has a "FILENAME:LINENO: " prefix.
 
-# Copyright (C) 2016-2020 Free Software Foundation, Inc.
+# Copyright (C) 2016-2022 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ $prog = $full_prog_name if $full_prog_name;
 # Transform each to this: "Unmatched [..."
 my $err_subst = {ERR_SUBST => 's/(: Unmatched \[).*/$1.../'};
 
+my $no_pcre = "$prog: Perl matching not supported in a --disable-perl-regexp build\n";
+
 my @Tests =
   (
    # Show that grep now includes filename:lineno in the diagnostic:
@@ -48,7 +50,7 @@ my @Tests =
    # Show that with two or more errors, grep now prints all diagnostics:
    ['invalid-re-2-files', '-f g -f h', {EXIT=>2},
     {AUX=>{g=>"1\n2[[\n3\n4[[\n"}},
-    {AUX=>{h=>"\n\n[[\n"}},
+    {AUX=>{h=>"5\n6\n7[[\n"}},
     $err_subst,
     {ERR => "$prog: g:2: Unmatched [...\n"
          . "$prog: g:4: Unmatched [...\n"
@@ -59,7 +61,7 @@ my @Tests =
    # Like the above, but on the other lines.
    ['invalid-re-2-files2', '-f g -f h', {EXIT=>2},
     {AUX=>{g=>"1[[\n2\n3[[\n4\n"}},
-    {AUX=>{h=>"[[\n[[\n\n"}},
+    {AUX=>{h=>"5[[\n6[[\n7\n"}},
     $err_subst,
     {ERR => "$prog: g:1: Unmatched [...\n"
          . "$prog: g:3: Unmatched [...\n"
@@ -68,12 +70,57 @@ my @Tests =
     },
    ],
 
+   # Make sure the line numbers are right when some regexps are duplicates.
+   ['invalid-re-line-numbers', '-f g -f h', {EXIT=>2},
+    {AUX=>{g=>"1[[\n\n3[[\n\n5[[\n"}},
+    {AUX=>{h=>"1[[\n\n\n4[[\n\n6[[\n"}},
+    $err_subst,
+    {ERR => "$prog: g:1: Unmatched [...\n"
+         . "$prog: g:3: Unmatched [...\n"
+         . "$prog: g:5: Unmatched [...\n"
+         . "$prog: h:4: Unmatched [...\n"
+         . "$prog: h:6: Unmatched [...\n"
+    },
+   ],
+
    # Show that with two '-e'-specified erroneous regexps,
    # there is no file name or line number.
-   ['invalid-re-2e', '-e "[[" -e "[["', {EXIT=>2},
+   ['invalid-re-2e', '-e "1[[" -e "2[["', {EXIT=>2},
     $err_subst,
     {ERR => "$prog: Unmatched [...\n" x 2},
    ],
+
+   # Test unmatched ) as well.  It is OK with -E and an error with -G and -P.
+   ['invalid-re-E-paren', '-E ")"', {IN=>''}, {EXIT=>1}],
+   ['invalid-re-E-star-paren', '-E ".*)"', {IN=>''}, {EXIT=>1}],
+   ['invalid-re-G-paren', '-G "\\)"', {EXIT=>2},
+    {ERR => "$prog: Unmatched ) or \\)\n"},
+   ],
+   ['invalid-re-G-star-paren', '-G "a.*\\)"', {EXIT=>2},
+    {ERR => "$prog: Unmatched ) or \\)\n"},
+   ],
+   ['invalid-re-P-paren', '-P ")"', {EXIT=>2},
+    {ERR => $ENV{PCRE_WORKS} == 1
+       ? "$prog: unmatched closing parenthesis\n"
+       : $no_pcre
+    },
+   ],
+   ['invalid-re-P-star-paren', '-P "a.*)"', {EXIT=>2},
+    {ERR => $ENV{PCRE_WORKS} == 1
+       ? "$prog: unmatched closing parenthesis\n"
+       : $no_pcre
+    },
+   ],
+
+   # Prior to grep-3.6, the name of the offending file was not printed.
+   ['backtracking-with-file', '-P "((a+)*)+$"', {EXIT=>2},
+    {IN=>{f=>"a"x20 ."b"}},
+    {ERR => $ENV{PCRE_WORKS} == 1
+       ? "$prog: f: exceeded PCRE's backtracking limit\n"
+       : $no_pcre
+    },
+   ],
+
   );
 
 my $save_temps = $ENV{DEBUG};

@@ -1,5 +1,5 @@
-# wcrtomb.m4 serial 15
-dnl Copyright (C) 2008-2020 Free Software Foundation, Inc.
+# wcrtomb.m4 serial 17
+dnl Copyright (C) 2008-2022 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -15,15 +15,8 @@ AC_DEFUN([gl_FUNC_WCRTOMB],
   if test $ac_cv_func_wcrtomb = no; then
     HAVE_WCRTOMB=0
     AC_CHECK_DECLS([wcrtomb],,, [[
-/* Tru64 with Desktop Toolkit C has a bug: <stdio.h> must be included before
-   <wchar.h>.
-   BSD/OS 4.0.1 has a bug: <stddef.h>, <stdio.h> and <time.h> must be
-   included before <wchar.h>.  */
-#include <stddef.h>
-#include <stdio.h>
-#include <time.h>
-#include <wchar.h>
-]])
+      #include <wchar.h>
+    ]])
     if test $ac_cv_have_decl_wcrtomb = yes; then
       dnl On Minix 3.1.8, the system's <wchar.h> declares wcrtomb() although
       dnl it does not have the function. Avoid a collision with gnulib's
@@ -31,9 +24,11 @@ AC_DEFUN([gl_FUNC_WCRTOMB],
       REPLACE_WCRTOMB=1
     fi
   else
-    if test $REPLACE_MBSTATE_T = 1; then
-      REPLACE_WCRTOMB=1
-    fi
+    dnl We don't actually need to override wcrtomb when redefining the semantics
+    dnl of the mbstate_t type. Tested on 32-bit AIX.
+    dnl if test $REPLACE_MBSTATE_T = 1; then
+    dnl   REPLACE_WCRTOMB=1
+    dnl fi
     if test $REPLACE_WCRTOMB = 0; then
       dnl On Android 4.3, wcrtomb produces wrong characters in the C locale.
       dnl On AIX 4.3, OSF/1 5.1 and Solaris <= 11.3, wcrtomb (NULL, 0, NULL)
@@ -50,12 +45,6 @@ AC_DEFUN([gl_FUNC_WCRTOMB],
            [AC_LANG_SOURCE([[
 #include <string.h>
 #include <stdlib.h>
-/* Tru64 with Desktop Toolkit C has a bug: <stdio.h> must be included before
-   <wchar.h>.
-   BSD/OS 4.0.1 has a bug: <stddef.h>, <stdio.h> and <time.h> must be
-   included before <wchar.h>.  */
-#include <stddef.h>
-#include <stdio.h>
 #include <wchar.h>
 int main ()
 {
@@ -79,7 +68,9 @@ int main ()
         ])
       case "$gl_cv_func_wcrtomb_works" in
         *yes) ;;
-        *) REPLACE_WCRTOMB=1 ;;
+        *) AC_DEFINE([WCRTOMB_C_LOCALE_BUG], [1],
+             [Define if the wcrtomb function does not work in the C locale.])
+           REPLACE_WCRTOMB=1 ;;
       esac
     fi
     if test $REPLACE_WCRTOMB = 0; then
@@ -101,13 +92,6 @@ changequote([,])dnl
               [AC_LANG_SOURCE([[
 #include <locale.h>
 #include <string.h>
-/* Tru64 with Desktop Toolkit C has a bug: <stdio.h> must be included before
-   <wchar.h>.
-   BSD/OS 4.0.1 has a bug: <stddef.h>, <stdio.h> and <time.h> must be
-   included before <wchar.h>.  */
-#include <stddef.h>
-#include <stdio.h>
-#include <time.h>
 #include <wchar.h>
 #include <stdlib.h>
 int main ()
@@ -148,7 +132,9 @@ int main ()
         ])
       case "$gl_cv_func_wcrtomb_retval" in
         *yes) ;;
-        *) REPLACE_WCRTOMB=1 ;;
+        *) AC_DEFINE([WCRTOMB_RETVAL_BUG], [1],
+             [Define if the wcrtomb function has an incorrect return value.])
+           REPLACE_WCRTOMB=1 ;;
       esac
     fi
   fi
