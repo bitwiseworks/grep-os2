@@ -84,7 +84,6 @@ if test "${PATH_SEPARATOR+set}" != set; then
   ;;
   esac
 fi
-
 # We use a trap below for cleanup.  This requires us to go through
 # hoops to get the right exit status transported through the handler.
 # So use 'Exit STATUS' instead of 'exit STATUS' inside of the tests.
@@ -174,7 +173,7 @@ printf "\\351" 2>/dev/null \
   | LC_ALL=C tr "\\351" x | LC_ALL=C grep "^x$" > /dev/null \
   || exit 1
 f_local_() { local v=1; }; f_local_ || exit 1
-#f_dash_local_fail_() { local t=$(printf " 1"); }; f_dash_local_fail_
+f_dash_local_fail_() { local t=$(printf " 1"); }; f_dash_local_fail_
 score_=10
 if test "$VERBOSE" = yes; then
   test -n "$( (exec 3>&1; set -x; P=1 true 2>&3) 2> /dev/null)" && score_=9
@@ -201,7 +200,7 @@ else
 
   # Search for a shell that meets our requirements.
   for re_shell_ in __current__ "${CONFIG_SHELL:-no_shell}" \
-      /bin/sh dash bash zsh pdksh fail
+      /bin/sh bash dash zsh pdksh fail
   do
     test "$re_shell_" = no_shell && continue
 
@@ -442,7 +441,7 @@ setup_ ()
   # Remove relative and non-accessible directories from PATH, including '.'
   # and Zero-length entries.
   saved_IFS="$IFS"
-  IFS=:
+  IFS=$PATH_SEPARATOR
   new_PATH=
   sep_=
   for dir in $PATH; do
@@ -453,8 +452,14 @@ setup_ ()
     esac
   done
   IFS="$saved_IFS"
+  case `(uname -o) 2>/dev/null` in
+  OS/2)
+  ;;
+  *)
   PATH="$new_PATH"
   export PATH
+  ;;
+  esac
 }
 
 # This is a stub function that is run upon trap (upon regular exit and
