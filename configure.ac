@@ -1,7 +1,7 @@
 dnl
 dnl autoconf input file for GNU grep
 dnl
-dnl Copyright (C) 1997-2006, 2009-2020 Free Software Foundation, Inc.
+dnl Copyright (C) 1997-2006, 2009-2022 Free Software Foundation, Inc.
 dnl
 dnl This file is part of GNU grep.
 dnl
@@ -31,14 +31,14 @@ if test -n "$GREP" || test -n "$EGREP"; then
   On Solaris 11, install the package text/gnu-grep or system/xopen/xcu4.])
 fi
 
-AC_CONFIG_AUX_DIR(build-aux)
-AC_CONFIG_SRCDIR(src/grep.c)
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_SRCDIR([src/grep.c])
 AC_DEFINE([GREP], 1, [We are building grep])
-AC_PREREQ([2.63])
+AC_PREREQ([2.64])
 AC_CONFIG_MACRO_DIRS([m4])
 
 dnl Automake stuff.
-AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz color-tests parallel-tests
+AM_INIT_AUTOMAKE([1.11 dist-xz color-tests parallel-tests
                   subdir-objects])
 AM_SILENT_RULES([yes]) # make --enable-silent-rules the default.
 
@@ -68,50 +68,66 @@ gl_INIT
 AC_DEFINE([GNULIB_NO_VLA], [1], [Define to 1 to disable use of VLAs])
 
 # The test suite needs to know if we have a working perl.
-# FIXME: this is suboptimal.  Ideally, we would be able to call gl_PERL
-# with an ACTION-IF-NOT-FOUND argument ...
-cu_have_perl=yes
-case $PERL in *"/missing "*) cu_have_perl=no;; esac
-AM_CONDITIONAL([HAVE_PERL], [test $cu_have_perl = yes])
+AM_CONDITIONAL([HAVE_PERL], [test "$gl_cv_prog_perl" != no])
+
+# gl_GCC_VERSION_IFELSE([major], [minor], [run-if-found], [run-if-not-found])
+# ------------------------------------------------
+# If $CPP is gcc-MAJOR.MINOR or newer, then run RUN-IF-FOUND.
+# Otherwise, run RUN-IF-NOT-FOUND.
+AC_DEFUN([gl_GCC_VERSION_IFELSE],
+  [AC_PREPROC_IFELSE(
+    [AC_LANG_PROGRAM(
+      [[
+#if ($1) < __GNUC__ || (($1) == __GNUC__ && ($2) <= __GNUC_MINOR__)
+/* ok */
+#else
+# error "your version of gcc is older than $1.$2"
+#endif
+      ]]),
+    ], [$3], [$4])
+  ]
+)
 
 AC_ARG_ENABLE([gcc-warnings],
-  [AS_HELP_STRING([--enable-gcc-warnings],
-                  [turn on lots of GCC warnings (for developers)])],
+  [AS_HELP_STRING([--enable-gcc-warnings@<:@=TYPE@:>@],
+    [control generation of GCC warnings.  The TYPE 'no' disables
+     warnings (default for non-developer builds); 'yes' generates
+     cheap warnings if available (default for developer builds);
+     'expensive' in addition generates expensive-to-compute warnings
+     if available.])],
   [case $enableval in
-     yes|no) ;;
+     no|yes|expensive) ;;
      *)      AC_MSG_ERROR([bad value $enableval for gcc-warnings option]) ;;
    esac
    gl_gcc_warnings=$enableval],
-  [gl_gcc_warnings=no
-   if test "$GCC" = yes && test -d "$srcdir"/.git; then
-     AC_COMPILE_IFELSE(
-       [AC_LANG_PROGRAM([[
-          #if ! (6 < __GNUC__ + (2 <= __GNUC_MINOR__))
-            #error "--enable-gcc-warnings defaults to 'no' on older GCC"
-          #endif
-          ]])],
-       [gl_gcc_warnings=yes])
-   fi]
+  [
+   # GCC provides fine-grained control over diagnostics which
+   # is used in gnulib for example to suppress warnings from
+   # certain sections of code.  So if this is available and
+   # we're running from a git repo, then auto enable the warnings.
+   gl_gcc_warnings=no
+   gl_GCC_VERSION_IFELSE([4], [6],
+                         [test -d "$srcdir"/.git \
+                          && ! test -f "$srcdir"/.tarball-version \
+                          && gl_gcc_warnings=yes])]
 )
 
-if test "$gl_gcc_warnings" = yes; then
+if test $gl_gcc_warnings != no; then
   gl_WARN_ADD([-Werror], [WERROR_CFLAGS])
   AC_SUBST([WERROR_CFLAGS])
 
-  nw=
+  ew=
+  AS_IF([test $gl_gcc_warnings != expensive],
+    [# -fanalyzer and related options slow GCC considerably.
+     ew="$ew -fanalyzer -Wno-analyzer-double-free -Wno-analyzer-malloc-leak"
+     ew="$ew -Wno-analyzer-null-dereference -Wno-analyzer-use-after-free"])
+
+  nw=$ew
   # This, $nw, is the list of warnings we disable.
-  nw="$nw -Wdeclaration-after-statement" # too useful to forbid
-  nw="$nw -Waggregate-return"       # anachronistic
-  nw="$nw -Wlong-long"              # C90 is anachronistic (lib/gethrxtime.h)
-  nw="$nw -Wc++-compat"             # We don't care about C++ compilers
-  nw="$nw -Wundef"                  # Warns on '#if GNULIB_FOO' etc in gnulib
+  nw="$nw -Wvla"                    # suppress a warning in regexec.h
+  nw="$nw -Winline"                 # suppress warnings from streq.h's streq5
   nw="$nw -Wsystem-headers"         # Don't let system headers trigger warnings
-  nw="$nw -Wpadded"                 # Our structs are not padded
   nw="$nw -Wstack-protector"        # generates false alarms for useful code
-  nw="$nw -Wswitch-default"         # Too many warnings for now
-  nw="$nw -Wunsafe-loop-optimizations" # OK to suppress unsafe optimizations
-  nw="$nw -Winline"                 # streq.h's streq4, streq6 and strcaseeq6
-  nw="$nw -Wstrict-overflow"        # regexec.c
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT([ws], [$ws], [$nw])
@@ -147,6 +163,27 @@ if test "$gl_gcc_warnings" = yes; then
   gl_WARN_ADD([-Wno-format-nonliteral])
   gl_MANYWARN_COMPLEMENT([GNULIB_WARN_CFLAGS], [$WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_WARN_CFLAGS])
+
+  # For gnulib-tests, the set is slightly smaller still.
+  nw=
+  nw="$nw -Wstrict-prototypes"
+  # It's not worth being this picky about test programs.
+  nw="$nw -Wsuggest-attribute=const"
+  nw="$nw -Wsuggest-attribute=pure"
+  nw="$nw -Wsuggest-attribute=format"
+  nw="$nw -Wformat-truncation=2"    # False alarm in strerror_r.c
+  nw="$nw -Wold-style-definition"
+
+  # Disable to avoid warnings in e.g., test-intprops.c and test-limits-h.c
+  # due to overlong expansions like this:
+  # test-intprops.c:147:5: error: string literal of length 9531 exceeds \
+  # maximum length 4095 that ISO C99 compilers are required to support
+  nw="$nw -Woverlength-strings"
+
+  gl_MANYWARN_COMPLEMENT([GNULIB_TEST_WARN_CFLAGS],
+                         [$GNULIB_WARN_CFLAGS], [$nw])
+  gl_WARN_ADD([-Wno-return-type], [GNULIB_TEST_WARN_CFLAGS])
+  AC_SUBST([GNULIB_TEST_WARN_CFLAGS])
 fi
 
 # By default, argmatch should fail calling usage (EXIT_FAILURE).
@@ -156,13 +193,12 @@ AC_DEFINE([ARGMATCH_DIE_DECL], [void usage (int _e)],
           [Define to the declaration of the xargmatch failure function.])
 
 dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_DIRENT
 
 dnl Checks for functions.
 AC_FUNC_CLOSEDIR_VOID
 
-AC_CHECK_FUNCS_ONCE(isascii setlocale)
+AC_CHECK_FUNCS_ONCE([isascii setlocale])
 
 dnl I18N feature
 AM_GNU_GETTEXT_VERSION([0.18.2])

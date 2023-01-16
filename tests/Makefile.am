@@ -1,5 +1,5 @@
 ## Process this file with automake to create Makefile.in
-# Copyright 1997-1998, 2005-2020 Free Software Foundation, Inc.
+# Copyright 1997-1998, 2005-2022 Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,10 +66,12 @@ TESTS =						\
   backref-alt					\
   backref-multibyte-slow			\
   backref-word					\
+  backslash-dot					\
   backslash-s-and-repetition-operators		\
   backslash-s-vs-invalid-multibyte		\
   big-hole					\
   big-match					\
+  binary-file-matches				\
   bogus-wctob					\
   bre						\
   c-locale					\
@@ -81,6 +83,7 @@ TESTS =						\
   case-fold-titlecase				\
   char-class-multibyte				\
   char-class-multibyte2				\
+  color-colors					\
   context-0					\
   count-newline					\
   dfa-coverage					\
@@ -102,11 +105,14 @@ TESTS =						\
   fgrep-longest					\
   file						\
   filename-lineno.pl				\
+  fillbuf-long-line				\
   fmbtest					\
   foad1						\
   grep-dev-null					\
   grep-dev-null-out				\
   grep-dir					\
+  hangul-syllable				\
+  hash-collision-perf				\
   help-version					\
   high-bit-range				\
   in-eq-out-infloop				\
@@ -118,6 +124,7 @@ TESTS =						\
   kwset-abuse					\
   long-line-vs-2GiB-read			\
   long-pattern-perf				\
+  many-regex-performance			\
   match-lines					\
   max-count-overread				\
   max-count-vs-context				\
@@ -157,6 +164,7 @@ TESTS =						\
   stack-overflow				\
   status					\
   surrogate-pair				\
+  surrogate-search				\
   symlink					\
   triple-backref				\
   turkish-I					\
@@ -234,12 +242,12 @@ TESTS_ENVIRONMENT =				\
   LOCALE_FR='$(LOCALE_FR)'			\
   LOCALE_FR_UTF8='$(LOCALE_FR_UTF8)'		\
   AWK=$(AWK)					\
-  GREP_OPTIONS=''				\
   LC_ALL=C					\
   abs_top_builddir='$(abs_top_builddir)'	\
   abs_top_srcdir='$(abs_top_srcdir)'		\
   abs_srcdir='$(abs_srcdir)'			\
   built_programs="$$built_programs"		\
+  host_triplet='$(host_triplet)'		\
   srcdir='$(srcdir)'				\
   top_srcdir='$(top_srcdir)'			\
   CC='$(CC)'					\
@@ -251,7 +259,13 @@ TESTS_ENVIRONMENT =				\
   PERL='$(PERL)'				\
   SHELL='$(SHELL)'				\
   PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
-  ; 9>&2
+  ;						\
+						\
+  : 'set this envvar to indicate whether -P works';	\
+  m=0; if err=`echo .|grep -Pq . 2>&1`; then		\
+    test -z "$$err" && m=1; fi;				\
+  export PCRE_WORKS=$$m;				\
+  9>&2
 
 LOG_COMPILER = $(SHELL)
 

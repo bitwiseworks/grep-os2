@@ -1,5 +1,147 @@
 GNU grep NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 3.8 (2022-09-02) [stable]
+
+** Changes in behavior
+
+  The -P option is now based on PCRE2 instead of the older PCRE,
+  thanks to code contributed by Carlo Arenas.
+
+  The egrep and fgrep commands, which have been deprecated since
+  release 2.5.3 (2007), now warn that they are obsolescent and should
+  be replaced by grep -E and grep -F.
+
+  The confusing GREP_COLOR environment variable is now obsolescent.
+  Instead of GREP_COLOR='xxx', use GREP_COLORS='mt=xxx'.  grep now
+  warns if GREP_COLOR is used and is not overridden by GREP_COLORS.
+  Also, grep now treats GREP_COLOR like GREP_COLORS by silently
+  ignoring it if it attempts to inject ANSI terminal escapes.
+
+  Regular expressions with stray backslashes now cause warnings, as
+  their unspecified behavior can lead to unexpected results.
+  For example, '\a' and 'a' are not always equivalent
+  <https://bugs.gnu.org/39678>.  Similarly, regular expressions or
+  subexpressions that start with a repetition operator now also cause
+  warnings due to their unspecified behavior; for example, *a(+b|{1}c)
+  now has three reasons to warn.  The warnings are intended as a
+  transition aid; they are likely to be errors in future releases.
+
+  Regular expressions like [:space:] are now errors even if
+  POSIXLY_CORRECT is set, since POSIX now allows the GNU behavior.
+
+** Bug fixes
+
+  In locales using UTF-8 encoding, the regular expression '.' no
+  longer sometimes fails to match Unicode characters U+D400 through
+  U+D7FF (some Hangul Syllables, and Hangul Jamo Extended-B) and
+  Unicode characters U+108000 through U+10FFFF (half of Supplemental
+  Private Use Area plane B).
+  [bug introduced in grep 3.4]
+
+  The -s option no longer suppresses "binary file matches" messages.
+  [Bug#51860 introduced in grep 3.5]
+
+** Documentation improvements
+
+  The manual now covers unspecified behavior in patterns like \x, (+),
+  and range expressions outside the POSIX locale.
+
+
+* Noteworthy changes in release 3.7 (2021-08-14) [stable]
+
+** Changes in behavior
+
+  Use of the --unix-byte-offsets (-u) option now evokes a warning.
+  Since 3.1, this Windows-only option has had no effect.
+
+** Bug fixes
+
+  Preprocessing N patterns would take at least O(N^2) time when too many
+  patterns hashed to too few buckets. This now takes seconds, not days:
+  : | grep -Ff <(seq 6400000 | tr 0-9 A-J)
+  [Bug#44754 introduced in grep 3.5]
+
+
+* Noteworthy changes in release 3.6 (2020-11-08) [stable]
+
+** Changes in behavior
+
+  The GREP_OPTIONS environment variable no longer affects grep's behavior.
+  The variable was declared obsolescent in grep 2.21 (2014), and since
+  then any use had caused grep to issue a diagnostic.
+
+** Bug fixes
+
+  grep's DFA matcher performed an invalid regex transformation
+  that would convert an ERE like a+a+a+ to a+a+, which would make
+  grep a+a+a+ mistakenly match "aa".
+  [Bug#44351 introduced in grep 3.2]
+
+  grep -P now reports the troublesome input filename upon PCRE execution
+  failure.  Before, searching many files for something rare might fail with
+  just "exceeded PCRE's backtracking limit".  Now, it also reports which file
+  triggered the failure.
+
+
+* Noteworthy changes in release 3.5 (2020-09-27) [stable]
+
+** Changes in behavior
+
+  The message that a binary file matches is now sent to standard error
+  and the message has been reworded from "Binary file FOO matches" to
+  "grep: FOO: binary file matches", to avoid confusion with ordinary
+  output or when file names contain spaces and the like, and to be
+  more consistent with other diagnostics.  For example, commands
+  like 'grep PATTERN FILE | wc' no longer add 1 to the count of
+  matching text lines due to the presence of the message.  Like other
+  stderr messages, the message is now omitted if the --no-messages
+  (-s) option is given.
+
+  Two other stderr messages now use the typical form too.  They are
+  now "grep: FOO: warning: recursive directory loop" and "grep: FOO:
+  input file is also the output".
+
+  The --files-without-match (-L) option has reverted to its behavior
+  in grep 3.1 and earlier.  That is, grep -L again succeeds when a
+  line is selected, not when a file is listed.  The behavior in grep
+  3.2 through 3.4 was causing compatibility problems.
+
+** Bug fixes
+
+  grep -I no longer issues a spurious "Binary file FOO matches" line.
+  [Bug#33552 introduced in grep 2.23]
+
+  In UTF-8 locales, grep -w no longer ignores a multibyte word
+  constituent just before what would otherwise be a word match.
+  [Bug#43225 introduced in grep 2.28]
+
+  grep -i no longer mishandles ASCII characters that match multibyte
+  characters.  For example, 'LC_ALL=tr_TR.utf8 grep -i i' no longer
+  dumps core merely because 'i' matches 'İ' (U+0130 LATIN CAPITAL
+  LETTER I WITH DOT ABOVE) in Turkish when ignoring case.
+  [Bug#43577 introduced partly in grep 2.28 and partly in grep 3.4]
+
+  A performance regression with -E and many patterns has been mostly fixed.
+  "Mostly" as there is a performance tradeoff between Bug#22357 and Bug#40634.
+  [Bug#40634 introduced in grep 2.28]
+
+  A performance regression with many duplicate patterns has been fixed.
+  [Bug#43040 introduced in grep 3.4]
+
+  An N^2 RSS performance regression with many patterns has been fixed
+  in common cases (no backref, and no use of -o or --color).
+  With only 80,000 lines of /usr/share/dict/linux.words, the following
+  would use 100GB of RSS and take 3 minutes. With the fix, it used less
+  than 400MB and took less than one second:
+    head -80000 /usr/share/dict/linux.words > w; grep -vf w w
+  [Bug#43527 introduced in grep 3.4]
+
+** Build-related
+
+  "make dist" builds .tar.gz files again, as they are still used in
+  some barebones builds.
+
+
 * Noteworthy changes in release 3.4 (2020-01-02) [stable]
 
 ** New features
@@ -1181,7 +1323,7 @@ necessary to track the evolution of the regex package, and since
 I was changing it anyway I decided to do a general cleanup.
 
 ========================================================================
-Copyright (C) 1992, 1997-2002, 2004-2020 Free Software Foundation, Inc.
+Copyright (C) 1992, 1997-2002, 2004-2022 Free Software Foundation, Inc.
 
   Copying and distribution of this file, with or without modification,
   are permitted in any medium without royalty provided the copyright
